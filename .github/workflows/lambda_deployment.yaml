@@ -1,5 +1,6 @@
 # Code taken from https://docs.timescale.com/timescaledb/latest/tutorials/aws-lambda/continuous-deployment/
 # combined with https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#merge_group
+# with some additional modifications
 
 # name: deploy to lambda
 # on:
@@ -23,7 +24,7 @@
 #           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #           aws_region: ${{ secrets.AWS_REGION }}
 #           function_name: get-package
-#           source: get_package.py
+#           source: src/lambda_functions/get_package.py
 
 
 # DELETE AND UNCOMMENT ABOVE AFTER GETTING TO WORK.
@@ -53,4 +54,4 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
           source: src/lambda_functions/get_package.py
-      # copy from line 48 down for other functions I think
+      # copy from line 49 down for other functions I think
