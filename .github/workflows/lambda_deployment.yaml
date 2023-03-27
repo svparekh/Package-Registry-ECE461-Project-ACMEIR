@@ -26,7 +26,7 @@
 #           source: get_package.py
 
 
-# DELETE AND UNCOMMENT ABOVE AFTER GETTING TO WORK
+# DELETE AND UNCOMMENT ABOVE AFTER GETTING TO WORK.
 # CURRENTLY ON PUSH BUT ABOVE SHOULD CHANGE TO 
 # ON MERGE WITH MASTER
 name: deploy to lambda
@@ -35,7 +35,7 @@ on:
   # but only for the main branch
   push:
     branches:
-      - master
+      - Lambda-Functions
 jobs:
 
 
