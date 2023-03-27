@@ -53,4 +53,4 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
           source: src/lambda_functions/get_package.py
-      # copy from line 46 down for other functions I think
+      # copy from line 48 down for other functions I think
