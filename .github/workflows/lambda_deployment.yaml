@@ -52,5 +52,5 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
-          source: get_package.py
+          source: src/lambda_functions/get_package.py
       # copy from line 46 down for other functions I think
