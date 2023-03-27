@@ -1,0 +1,56 @@
+# Code taken from https://docs.timescale.com/timescaledb/latest/tutorials/aws-lambda/continuous-deployment/
+# combined with https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#merge_group
+
+# name: deploy to lambda
+# on:
+#   pull_request:
+#     branches:
+#       - master
+#     types:
+#       - closed
+
+# jobs:
+#   deploy_source:
+#     if: github.event.pull_request.merged == true
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: checkout source code
+#         uses: actions/checkout@v1
+#       - name: deploy get-package
+#         uses: appleboy/lambda-action@master
+#         with:
+#           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws_region: ${{ secrets.AWS_REGION }}
+#           function_name: get-package
+#           source: get_package.py
+
+
+# DELETE AND UNCOMMENT ABOVE AFTER GETTING TO WORK
+# CURRENTLY ON PUSH BUT ABOVE SHOULD CHANGE TO 
+# ON MERGE WITH MASTER
+name: deploy to lambda
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - master
+jobs:
+
+
+  deploy_source:
+    name: deploy lambda from source
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v1
+      - name: deploy get-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-package
+          source: get_package.py
+      # copy from line 46 down for other functions I think
