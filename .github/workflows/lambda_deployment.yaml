@@ -1,5 +1,5 @@
 # Code taken from https://docs.timescale.com/timescaledb/latest/tutorials/aws-lambda/continuous-deployment/
-# combined with https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#merge_group
+# combined with https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-your-pull_request-workflow-when-a-pull-request-merges
 # with some additional modifications
 
 # name: deploy to lambda
