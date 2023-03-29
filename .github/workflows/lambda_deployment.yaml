@@ -54,4 +54,36 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
           source: src/lambda_functions/get_package.py
+      - name: deploy get-packages
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-packages
+          source: src/lambda_functions/get_packages.py
+      - name: deploy get-package-by-name
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-package-by-name
+          source: src/lambda_functions/get_package_by_name.py
+      - name: deploy update-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: update-package
+          source: src/lambda_functions/update_package.py
+      - name: deploy upload-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: upload-package
+          source: src/lambda_functions/upload_package.py
       # copy from line 49 down for other functions I think
