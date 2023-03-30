@@ -102,4 +102,11 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: delete-package-by-name
           source: src/lambda_functions/delete_package_by_name.py
-      # copy from line 49 down for other functions I think
+      - name: deploy reset
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: reset
+          source: src/lambda_functions/reset.py
