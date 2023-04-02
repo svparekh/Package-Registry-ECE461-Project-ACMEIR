@@ -53,7 +53,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
-          source: src/lambda_functions/get_package.py
+          source: src/lambda_functions/get_package/lambda_function.py
       - name: deploy get-packages
         uses: appleboy/lambda-action@master
         with:
@@ -61,7 +61,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-packages
-          source: src/lambda_functions/get_packages.py
+          source: src/lambda_functions/get_packages/lambda_function.py
       - name: deploy get-package-by-name
         uses: appleboy/lambda-action@master
         with:
@@ -69,7 +69,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package-by-name
-          source: src/lambda_functions/get_package_by_name.py
+          source: src/lambda_functions/get_package_by_name/lambda_function.py
       - name: deploy update-package
         uses: appleboy/lambda-action@master
         with:
@@ -77,7 +77,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: update-package
-          source: src/lambda_functions/update_package.py
+          source: src/lambda_functions/update_package/lambda_function.py
       - name: deploy upload-package
         uses: appleboy/lambda-action@master
         with:
@@ -85,7 +85,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: upload-package
-          source: src/lambda_functions/upload_package.py
+          source: src/lambda_functions/upload_package/lambda_function.py
       - name: deploy delete-package
         uses: appleboy/lambda-action@master
         with:
@@ -93,7 +93,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: delete-package
-          source: src/lambda_functions/delete_package.py
+          source: src/lambda_functions/delete_package/lambda_function.py
       - name: deploy delete-package-by-name
         uses: appleboy/lambda-action@master
         with:
@@ -101,7 +101,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: delete-package-by-name
-          source: src/lambda_functions/delete_package_by_name.py
+          source: src/lambda_functions/delete_package_by_name/lambda_function.py
       - name: deploy reset
         uses: appleboy/lambda-action@master
         with:
@@ -109,4 +109,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: reset
-          source: src/lambda_functions/reset.py
+          source: src/lambda_functions/reset/lambda_function.py
