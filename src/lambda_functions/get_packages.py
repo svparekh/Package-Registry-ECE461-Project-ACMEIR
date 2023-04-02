@@ -3,7 +3,7 @@ import requests
 
 def lambda_handler(event, context):
   
-  # if you can see this, CI/CD works 2
+  # if you can see this, CI/CD works 3
 
   # get packages
   url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/"
