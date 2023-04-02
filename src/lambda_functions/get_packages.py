@@ -34,8 +34,7 @@ def lambda_handler(event, context):
     elif query_version[0] == '~': # tilde
       target_package_versions[query_name].update(getTildeVersionNumbers(query_version))
     else: # bounded range
-      pass
-
+    
 def getCaratVersionNumbers(startingVersion):
   version_numbers = set()
   patch_number = int(startingVersion[-1])
