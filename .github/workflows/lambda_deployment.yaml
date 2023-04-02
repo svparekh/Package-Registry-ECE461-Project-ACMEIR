@@ -53,7 +53,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package
-          source: src/lambda_functions/get_package/lambda_function.py
+          source: src/lambda_functions/get_package.py
       - name: deploy get-packages
         uses: appleboy/lambda-action@master
         with:
