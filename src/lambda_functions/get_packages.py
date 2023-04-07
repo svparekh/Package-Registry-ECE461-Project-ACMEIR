@@ -37,25 +37,21 @@ def lambda_handler(event, context):
       target_package_versions[query_name].update(getTildeVersionNumbers(query_version))
     else: # bounded range
     
-def getCaratVersionNumbers(startingVersion):
-  version_numbers = set()
-  patch_number = int(startingVersion[-1])
-  minor_number = int(startingVersion[-3])
-  while minor_number < 10:
-    while patch_number < 10:
-      version_numbers.add(startingVersion[:-3] + str(minor_number) + '.' + str(patch_number))
-      patch_number += 1
-    minor_number += 1
-    patch_number = 1
-  return version_numbers
+def fitsTildeTarget(target, version):
+  return version[0] == target[0] and version[2] == target[2] and version[4] >= target[4]
 
+def fitsCaratTarget(target, version):
 
-def getTildeVersionNumbers(startingVersion):
-  version_numbers = set()
-  patch_number = int(startingVersion[-1])
-  while patch_number < 10:
-    version_numbers.add(startingVersion[:-1] + str(patch_number))
-    patch_number += 1
-    
-  return version_numbers
+  same_minor_higher_or_equal_patch = version[0] == target[0] and version[2] == target[2] and version[4] >= target[4]
+  higher_minor = version[0] == target[0] and version[2] > target[2]
+
+  return same_minor_higher_or_equal_patch or higher_minor
+
+def fitsBoundedRangeTarget(targetLow, targetHigh, version):
+  major_in_between_targets_non_inclusive = version[0] < targetHigh[0] and version[0] > targetLow[0]
+  major_is_low_and_same_minor_higher_or_equal_patch = version[0] == targetLow[0] and version[2] == targetLow[2] and version[4] >= targetLow[4]
+  major_is_low_and_higher_minor = version[0] == targetLow[0] and version[2] > targetLow[2]
+  major_is_high_and_same_minor_lower_or_equal_patch = version[0] == targetHigh[0] and version[2] == targetHigh[2] and version[4] <= targetHigh[4]
+  major_is_high_and_lower_minor = version[0] == targetHigh[0] and version[2] < targetHigh[2]
   
+  return major_in_between_targets_non_inclusive or major_is_low_and_same_minor_higher_or_equal_patch or major_is_low_and_higher_minor or major_is_high_and_same_minor_lower_or_equal_patch or major_is_high_and_lower_minor
