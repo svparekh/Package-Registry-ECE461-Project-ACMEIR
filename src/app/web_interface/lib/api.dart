@@ -9,7 +9,7 @@ class APICaller {
 
   static addPackage({required String url}) async {
     try {
-      var apiUrl = Uri.parse(baseUrl + addEndpoint);
+      var apiUrl = Uri.parse(addEndpoint);
       var response = await get(apiUrl);
       if (response.statusCode == 200) {
         // Something
@@ -22,7 +22,7 @@ class APICaller {
 
   static deletePackages() async {
     try {
-      var apiUrl = Uri.parse(baseUrl + deleteEndpoint);
+      var apiUrl = Uri.parse(deleteEndpoint);
       var response = await get(apiUrl);
       if (response.statusCode == 200) {
         // Something
@@ -34,7 +34,7 @@ class APICaller {
 
   static updatePackages() async {
     try {
-      var apiUrl = Uri.parse(baseUrl + updateEndpoint);
+      var apiUrl = Uri.parse(updateEndpoint);
       var response = await get(apiUrl);
       if (response.statusCode == 200) {
         // Something
@@ -46,7 +46,7 @@ class APICaller {
 
   static factoryReset() async {
     try {
-      var apiUrl = Uri.parse(baseUrl + resetEndpoint);
+      var apiUrl = Uri.parse(resetEndpoint);
       var response = await get(apiUrl);
       if (response.statusCode == 200) {
         // Something
