@@ -2,19 +2,40 @@ import json
 import requests
 
 def lambda_handler(event, context):
-    
+
     package_name = event['path'][16:] # /package/byName/_______
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/name-to-id-lookup/" + package_name
 
-    lookup_response = requests.get(url).json()
-    delete_response = requests.delete(url).json()
+    #  url and request from https://stackoverflow.com/questions/60486537/firebase-firestore-rest-request-query-and-filter
+    # also looked at https://stackoverflow.com/questions/66262701/only-structured-queries-are-supported-firestore-api-rest
+    # used documentation https://cloud.google.com/firestore/docs/reference/rest/v1beta1/projects.databases.documents/runQuery and connected links
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents:runQuery"
+    request_body = {
+        "structuredQuery": {
+            "from": [{
+                "collectionId": "acme-register-package-information",
+                "allDescendants": True
+            }],
+            "where": {
+                "fieldFilter": {
+                    "field": {
+                        "fieldPath": "package_name"
+                    },
+                    "op": "EQUAL",
+                    "value": {
+                        "stringValue": "test"
+                    }
+                }
+            }
+        }
+    }
+
+    lookup_response = requests.post(url, json.dumps(request_body)).json()
+    # print(lookup_response)
     
-    # NOTE: Assuming that acme-register-package-information and name-to-id-lookup are synced
-    # SHOULD PROBABLY ADD ERROR CHECKING IF THAT IS NOT THE CASE
-
-    if not("error" in lookup_response):
-        for package_id in lookup_response['fields']:
-            url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+    if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
+    
+        for document in lookup_response:
+            url = "https://firestore.googleapis.com/v1/" + document['document']['name']
             delete_response = requests.delete(url).json()
 
         proxy_integration_response = {
@@ -34,5 +55,3 @@ def lambda_handler(event, context):
     }
 
     return proxy_integration_response
-
-# small change to see if lambda function upload is working
