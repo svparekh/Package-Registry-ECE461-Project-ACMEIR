@@ -37,9 +37,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
-  # Path plugin to read and write to files
-  path_provider: ^2.0.13
-
   # Windows 11 Style UI
   fluent_ui: ^4.4.1
 
@@ -49,6 +46,8 @@ dependencies:
   firebase_auth: ^4.3.0
   # Firestore from Firebase
   cloud_firestore: ^4.4.5
+  # Use get() for api call
+  http: ^0.13.5
   
 
 dev_dependencies:
