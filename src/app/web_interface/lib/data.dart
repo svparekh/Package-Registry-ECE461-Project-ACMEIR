@@ -37,7 +37,7 @@ class PackageRegistry {
     List<Map<String, dynamic>> newData = await grabData();
     _data = newData;
     filteredData = newData;
-    selectedData = newData;
+    selectedData = [];
 
     return newData.isNotEmpty;
   }

@@ -8,7 +8,10 @@ class APICaller {
   static String baseUrl = "";
   static String endpoint = "$baseUrl/";
 
-  addPackage({required String url}) {}
+  addPackage({required String url}) {
+    print("added $url");
+    // Must check if package with same name and version already exists or not
+  }
 
   deletePackages() {}
 
