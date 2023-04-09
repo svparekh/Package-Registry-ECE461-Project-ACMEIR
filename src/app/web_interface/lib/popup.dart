@@ -74,11 +74,11 @@ Future<bool> showPackageDialog(BuildContext context,
                       : () async {
                           isWorkingStream.add(true);
                           if (type == 'Add') {
-                            APICaller().addPackage(url: controller.text);
+                            APICaller.addPackage(url: controller.text);
                           } else if (type == 'Update') {
-                            APICaller().updatePackages();
+                            APICaller.updatePackages();
                           } else if (type == 'Delete') {
-                            APICaller().deletePackages();
+                            APICaller.deletePackages();
                           }
                           await Future.delayed(Duration(seconds: 2))
                               .then((value) => Navigator.pop(context, true));

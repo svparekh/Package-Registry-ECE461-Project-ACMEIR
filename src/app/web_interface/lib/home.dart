@@ -97,17 +97,10 @@ class _HomePageState extends State<HomePage> {
               compactBreakpointWidth: 900,
               primaryItems: [
                 CommandBarButton(
-                  onPressed: () async {
-                    // Call method to refresh data
-                    refreshSuccess = await PackageRegistry().importData();
-                    setState(() {
-                      _searchController.clear();
-                    });
-                  },
+                  onPressed: _onRefresh,
                   icon: const Icon(FluentIcons.update_restore),
                   label: const Text(
                     "Refresh",
-                    semanticsLabel: 'Refresh',
                   ),
                 ),
                 CommandBarButton(
@@ -115,13 +108,13 @@ class _HomePageState extends State<HomePage> {
                       // TODO: Call add method (make one in PackageRegistry)
                       bool result =
                           await showPackageDialog(context, type: 'Add');
-
-                      setState(() {});
+                      if (result) {
+                        _onRefresh();
+                      }
                     },
                     icon: const Icon(FluentIcons.add),
                     label: const Text(
                       'Add',
-                      semanticsLabel: 'Add',
                     )),
                 CommandBarButton(
                   onPressed: _pr.selectedData.isEmpty
@@ -130,7 +123,9 @@ class _HomePageState extends State<HomePage> {
                           // TODO: Call delete method (make one in PackageRegistry)
                           bool result = await showPackageDialog(context,
                               type: 'Delete', packages: _pr.selectedData);
-                          setState(() {});
+                          if (result) {
+                            _onRefresh();
+                          }
                         },
                   icon: const Icon(FluentIcons.delete),
                   label: Text(
@@ -145,7 +140,9 @@ class _HomePageState extends State<HomePage> {
                           // TODO: Call update method (make one in PackageRegistry)
                           bool result = await showPackageDialog(context,
                               type: 'Update', packages: _pr.selectedData);
-                          setState(() {});
+                          if (result) {
+                            _onRefresh();
+                          }
                         },
                   icon: const Icon(FluentIcons.download),
                   label: Text(
@@ -189,18 +186,18 @@ class _HomePageState extends State<HomePage> {
                         });
                       },
                       style: CheckboxThemeData(
-                        checkedIconColor: ButtonState.resolveWith(
-                            (states) => FluentTheme.of(context).checkedColor),
-                        uncheckedIconColor: ButtonState.resolveWith(
-                            (states) => FluentTheme.of(context).checkedColor),
+                        checkedIconColor:
+                            ButtonState.resolveWith((states) => Colors.white),
+                        uncheckedIconColor:
+                            ButtonState.resolveWith((states) => Colors.white),
                         checkedDecoration: ButtonState.resolveWith((states) =>
                             BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: FluentTheme.of(context).accentColor)),
+                                color: Colors.blue)),
                         uncheckedDecoration: ButtonState.resolveWith((states) =>
                             BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: FluentTheme.of(context).accentColor)),
+                                color: Colors.blue)),
                         icon: _pr.isSortAscending
                             ? FluentIcons.up
                             : FluentIcons.down,
@@ -278,5 +275,13 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  _onRefresh() async {
+    // Call method to refresh data
+    refreshSuccess = await PackageRegistry().importData();
+    setState(() {
+      _searchController.clear();
+    });
   }
 }
