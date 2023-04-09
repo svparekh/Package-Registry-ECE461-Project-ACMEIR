@@ -5,12 +5,12 @@ class APICaller {
   static String addEndpoint = "$baseUrl/";
   static String deleteEndpoint = "$baseUrl/";
   static String updateEndpoint = "$baseUrl/";
+  static String resetEndpoint = "$baseUrl/";
 
   static addPackage({required String url}) async {
-    print("added $url");
     try {
-      var url = Uri.parse(baseUrl + addEndpoint);
-      var response = await get(url);
+      var apiUrl = Uri.parse(baseUrl + addEndpoint);
+      var response = await get(apiUrl);
       if (response.statusCode == 200) {
         // Something
       }
@@ -20,9 +20,39 @@ class APICaller {
     // Must check if package with same name and version already exists or not
   }
 
-  static deletePackages() {}
+  static deletePackages() async {
+    try {
+      var apiUrl = Uri.parse(baseUrl + deleteEndpoint);
+      var response = await get(apiUrl);
+      if (response.statusCode == 200) {
+        // Something
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  static updatePackages() {}
+  static updatePackages() async {
+    try {
+      var apiUrl = Uri.parse(baseUrl + updateEndpoint);
+      var response = await get(apiUrl);
+      if (response.statusCode == 200) {
+        // Something
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
-  static factoryReset() {}
+  static factoryReset() async {
+    try {
+      var apiUrl = Uri.parse(baseUrl + resetEndpoint);
+      var response = await get(apiUrl);
+      if (response.statusCode == 200) {
+        // Something
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }
