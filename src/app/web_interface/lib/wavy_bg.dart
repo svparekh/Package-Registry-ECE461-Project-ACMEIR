@@ -35,11 +35,9 @@ class DrawClip extends CustomClipper<Path> {
 }
 
 class WavingBackground extends StatefulWidget {
-  const WavingBackground({Key? key, required this.child, this.clipper})
-      : super(key: key);
+  const WavingBackground({Key? key, required this.child}) : super(key: key);
 
   final Widget child;
-  final CustomClipper<Path>? clipper;
   @override
   State<WavingBackground> createState() => _WavingBackgroundState();
 }

@@ -1,15 +1,7 @@
-import 'dart:html';
-
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:web_interface/api.dart';
 
 import 'data.dart' show PackageRegistry;
-import 'popup.dart'
-    show
-        showAddPackageDialog,
-        showDeletePackageDialog,
-        showPackageDialog,
-        showUpdatePackageDialog;
+import 'popup.dart' show showPackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
 import 'main.dart' show columns, offwhite, trailingSize;
 import 'wavy_bg.dart' show WavingBackground;
