@@ -5,7 +5,11 @@ import 'package:web_interface/api.dart';
 
 import 'data.dart' show PackageRegistry;
 import 'popup.dart'
-    show showAddPackageDialog, showDeletePackageDialog, showUpdatePackageDialog;
+    show
+        showAddPackageDialog,
+        showDeletePackageDialog,
+        showPackageDialog,
+        showUpdatePackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
 import 'main.dart' show columns, offwhite, trailingSize;
 import 'wavy_bg.dart' show WavingBackground;
@@ -108,8 +112,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CommandBarButton(
                     onPressed: () async {
-                      // Call add method (make one in PackageRegistry)
-                      String result = await showAddPackageDialog(context);
+                      // TODO: Call add method (make one in PackageRegistry)
+                      bool result =
+                          await showPackageDialog(context, type: 'Add');
 
                       setState(() {});
                     },
@@ -122,9 +127,9 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // Call delete method (make one in PackageRegistry)
-                          String result = await showDeletePackageDialog(
-                              context, _pr.selectedData);
+                          // TODO: Call delete method (make one in PackageRegistry)
+                          bool result = await showPackageDialog(context,
+                              type: 'Delete', packages: _pr.selectedData);
                           setState(() {});
                         },
                   icon: const Icon(FluentIcons.delete),
@@ -137,9 +142,9 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // Call update method (make one in PackageRegistry)
-                          String result = await showUpdatePackageDialog(
-                              context, _pr.selectedData);
+                          // TODO: Call update method (make one in PackageRegistry)
+                          bool result = await showPackageDialog(context,
+                              type: 'Update', packages: _pr.selectedData);
                           setState(() {});
                         },
                   icon: const Icon(FluentIcons.download),

@@ -1,110 +1,105 @@
+import 'dart:async';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:web_interface/api.dart';
 
-Future<String> showDeletePackageDialog(
-    BuildContext context, List<Map<String, dynamic>> packages) async {
-  final result = await showDialog<String>(
+Future<bool> showPackageDialog(BuildContext context,
+    {required String type, List<Map<String, dynamic>>? packages}) async {
+  // Type can be of types: 'Add', 'Update', or 'Delete'
+  // Returns false if canceled and true if main action button pressed
+  final bool? result = await showDialog<bool>(
     context: context,
-    builder: (context) => ContentDialog(
-      title: Text('Delete ${packages.length == 1 ? 'package' : 'packages'}?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'If you delete ${packages.length == 1 ? 'this package' : 'these packages'}, you won\'t be able to recover ${packages.length == 1 ? 'it' : 'them'}. Do you want to delete ${packages.length == 1 ? 'it' : 'them'}?',
-            style: const TextStyle(fontSize: 16),
-          ),
-          for (Map<String, dynamic> pack in packages) Text(pack['name'])
+    builder: (context) {
+      // Vars and stream setup
+      final TextEditingController controller = TextEditingController();
+      StreamController<bool> isWorkingStream =
+          StreamController<bool>.broadcast();
+      isWorkingStream.add(false);
+      // Determine type
+      Widget body;
+      if (type == 'Add') {
+        body = TextBox(
+          placeholder: 'GitHub or npm URL',
+          controller: controller,
+        );
+      } else if (type == 'Update') {
+        body = packages == null
+            ? Container()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${packages.length == 1 ? 'Package' : 'Packages'} currently eligible for update listed below will be updated.',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  for (Map<String, dynamic> pack in packages)
+                    Text(
+                        pack['name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
+                ],
+              );
+      } else if (type == 'Delete') {
+        body = packages == null
+            ? Container()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'If you delete ${packages.length == 1 ? 'this package' : 'these packages'}, you won\'t be able to recover ${packages.length == 1 ? 'it' : 'them'}. Do you want to delete ${packages.length == 1 ? 'it' : 'them'}?',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  for (Map<String, dynamic> pack in packages) Text(pack['name'])
+                ],
+              );
+      } else {
+        body = Text('Invalid dialog type');
+      }
+      // Dialog
+      return ContentDialog(
+        title: Text('$type package'),
+        content: StreamBuilder<bool>(
+            stream: isWorkingStream.stream,
+            builder: (context, snapshot) {
+              return (snapshot.hasData && snapshot.data == true)
+                  ? ProgressBar()
+                  : body;
+            }),
+        actions: [
+          StreamBuilder<bool>(
+              stream: isWorkingStream.stream,
+              builder: (context, snapshot) {
+                return FilledButton(
+                  onPressed: (snapshot.hasData && snapshot.data == true)
+                      ? null
+                      : () async {
+                          isWorkingStream.add(true);
+                          if (type == 'Add') {
+                            APICaller().addPackage(url: controller.text);
+                          } else if (type == 'Update') {
+                            APICaller().updatePackages();
+                          } else if (type == 'Delete') {
+                            APICaller().deletePackages();
+                          }
+                          await Future.delayed(Duration(seconds: 2))
+                              .then((value) => Navigator.pop(context, true));
+                        },
+                  child: Text(type),
+                );
+              }),
+          StreamBuilder<bool>(
+              stream: isWorkingStream.stream,
+              builder: (context, snapshot) {
+                return Button(
+                  onPressed: (snapshot.hasData && snapshot.data == true)
+                      ? null
+                      : () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                );
+              }),
         ],
-      ),
-      actions: [
-        Button(
-          child: const Text('Delete'),
-          onPressed: () {
-            Navigator.pop(context, 'deleted');
-            // Delete packages here
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
+      );
+    },
   );
-  return result ?? 'canceled';
-}
-
-Future<String> showUpdatePackageDialog(
-    BuildContext context, List<Map<String, dynamic>> packages) async {
-  // Returns
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      title: Text('Update ${packages.length == 1 ? 'package' : 'packages'}?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '${packages.length == 1 ? 'Package' : 'Packages'} currently eligible for update listed below will be updated.',
-            style: const TextStyle(fontSize: 16),
-          ),
-          for (Map<String, dynamic> pack in packages)
-            Text(pack['name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
-        ],
-      ),
-      actions: [
-        Button(
-          child: const Text('Update'),
-          onPressed: () {
-            Navigator.pop(context, 'updated');
-            // Update packages here
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
-  );
-  return result ?? 'canceled';
-}
-
-Future<String> showAddPackageDialog(BuildContext context) async {
-  // Returns null or package url
-  final TextEditingController controller = TextEditingController();
-  bool isWorking = false;
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      title: const Text('Add package'),
-      content: isWorking
-          ? ProgressBar()
-          : TextBox(
-              placeholder: 'GitHub or npm URL',
-              controller: controller,
-            ),
-      actions: [
-        Button(
-          child: const Text('Add'),
-          onPressed: () async {
-            isWorking = true;
-            APICaller().addPackage(url: controller.text);
-            await Future.delayed(Duration(seconds: 2));
-            Navigator.pop(context, controller.text);
-            // Add package here
-            // Must check if package with same name and version already exists or not
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, null),
-        ),
-      ],
-    ),
-  );
-  return result ?? 'canceled';
+  return result ?? false;
 }
 
 Future<String> showPropertiesDialog(BuildContext context,
