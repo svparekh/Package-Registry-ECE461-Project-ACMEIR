@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:web_interface/api.dart';
 
 Future<String> showDeletePackageDialog(
     BuildContext context, List<Map<String, dynamic>> packages) async {
@@ -36,6 +37,7 @@ Future<String> showDeletePackageDialog(
 
 Future<String> showUpdatePackageDialog(
     BuildContext context, List<Map<String, dynamic>> packages) async {
+  // Returns
   final result = await showDialog<String>(
     context: context,
     builder: (context) => ContentDialog(
@@ -70,19 +72,26 @@ Future<String> showUpdatePackageDialog(
 }
 
 Future<String> showAddPackageDialog(BuildContext context) async {
+  // Returns null or package url
   final TextEditingController controller = TextEditingController();
+  bool isWorking = false;
   final result = await showDialog<String>(
     context: context,
     builder: (context) => ContentDialog(
       title: const Text('Add package'),
-      content: TextBox(
-        placeholder: 'GitHub or npm URL',
-        controller: controller,
-      ),
+      content: isWorking
+          ? ProgressBar()
+          : TextBox(
+              placeholder: 'GitHub or npm URL',
+              controller: controller,
+            ),
       actions: [
         Button(
           child: const Text('Add'),
-          onPressed: () {
+          onPressed: () async {
+            isWorking = true;
+            APICaller().addPackage(url: controller.text);
+            await Future.delayed(Duration(seconds: 2));
             Navigator.pop(context, controller.text);
             // Add package here
             // Must check if package with same name and version already exists or not
@@ -90,7 +99,7 @@ Future<String> showAddPackageDialog(BuildContext context) async {
         ),
         FilledButton(
           child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
+          onPressed: () => Navigator.pop(context, null),
         ),
       ],
     ),

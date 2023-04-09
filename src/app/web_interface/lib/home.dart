@@ -1,4 +1,7 @@
+import 'dart:html';
+
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:web_interface/api.dart';
 
 import 'data.dart' show PackageRegistry;
 import 'popup.dart'
@@ -91,12 +94,10 @@ class _HomePageState extends State<HomePage> {
               primaryItems: [
                 CommandBarButton(
                   onPressed: () async {
-                    // Call method to refresh data (make sure _pr.filteredData is also adjusted)
+                    // Call method to refresh data
                     refreshSuccess = await PackageRegistry().importData();
                     setState(() {
                       _searchController.clear();
-                      _pr.filteredData = PackageRegistry().data;
-                      _pr.selectedData = [];
                     });
                   },
                   icon: const Icon(FluentIcons.update_restore),
@@ -109,6 +110,7 @@ class _HomePageState extends State<HomePage> {
                     onPressed: () async {
                       // Call add method (make one in PackageRegistry)
                       String result = await showAddPackageDialog(context);
+
                       setState(() {});
                     },
                     icon: const Icon(FluentIcons.add),
