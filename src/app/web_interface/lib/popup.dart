@@ -60,7 +60,8 @@ Future<bool> showPackageDialog(BuildContext context,
             stream: isWorkingStream.stream,
             builder: (context, snapshot) {
               return (snapshot.hasData && snapshot.data == true)
-                  ? ProgressBar()
+                  ? SizedBox(
+                      height: 32, width: double.infinity, child: ProgressBar())
                   : body;
             }),
         actions: [
