@@ -70,6 +70,14 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: get-package-by-name
           source: src/lambda_functions/get_package_by_name.py
+      - name: deploy get-package-by-regex
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-package-by-regex
+          source: src/lambda_functions/get_package_by_regex.py
       - name: deploy update-package
         uses: appleboy/lambda-action@master
         with:
