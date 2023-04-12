@@ -77,7 +77,9 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(fontSize: 16),
                 leadingIcon: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Icon(FluentIcons.search),
+                  child: Tooltip(
+                      message: 'Search packages',
+                      child: Icon(FluentIcons.search)),
                 ),
               )),
           // Command Bar / Filter options
@@ -90,21 +92,25 @@ class _HomePageState extends State<HomePage> {
               primaryItems: [
                 CommandBarButton(
                   onPressed: _onRefresh,
-                  icon: const Icon(FluentIcons.update_restore),
+                  icon: const Tooltip(
+                      message: 'Refresh package list',
+                      child: Icon(FluentIcons.update_restore)),
                   label: const Text(
                     "Refresh",
                   ),
                 ),
                 CommandBarButton(
                     onPressed: () async {
-                      // TODO: Call add method (make one in PackageRegistry)
+                      // Call add method (make one in PackageRegistry)
                       bool result =
                           await showPackageDialog(context, type: 'Add');
                       if (result) {
                         _onRefresh();
                       }
                     },
-                    icon: const Icon(FluentIcons.add),
+                    icon: const Tooltip(
+                        message: 'Add a new package',
+                        child: Icon(FluentIcons.add)),
                     label: const Text(
                       'Add',
                     )),
@@ -112,14 +118,16 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // TODO: Call delete method (make one in PackageRegistry)
+                          // Call delete method (make one in PackageRegistry)
                           bool result = await showPackageDialog(context,
                               type: 'Delete', packages: _pr.selectedData);
                           if (result) {
                             _onRefresh();
                           }
                         },
-                  icon: const Icon(FluentIcons.delete),
+                  icon: Tooltip(
+                      message: 'Delete the selected packages',
+                      child: const Icon(FluentIcons.delete)),
                   label: Text(
                     'Delete${_pr.selectedData.isEmpty ? '' : ' (${_pr.selectedData.length})'}',
                     semanticsLabel: 'Delete selected',
@@ -129,14 +137,16 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // TODO: Call update method (make one in PackageRegistry)
+                          // Call update method (make one in PackageRegistry)
                           bool result = await showPackageDialog(context,
                               type: 'Update', packages: _pr.selectedData);
                           if (result) {
                             _onRefresh();
                           }
                         },
-                  icon: const Icon(FluentIcons.download),
+                  icon: Tooltip(
+                      message: 'Update the selected packages',
+                      child: const Icon(FluentIcons.download)),
                   label: Text(
                     'Update${_pr.selectedData.length <= 1 ? '' : ' All'}',
                     semanticsLabel: 'Update selected',
@@ -168,31 +178,35 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CommandBarButton(
                     onPressed: () {},
-                    icon: Checkbox(
-                      semanticLabel: 'Sort ascending or descending',
-                      checked: _pr.isSortAscending,
-                      onChanged: (value) {
-                        setState(() {
-                          _pr.isSortAscending = value!;
-                          _pr.sortData();
-                        });
-                      },
-                      style: CheckboxThemeData(
-                        checkedIconColor:
-                            ButtonState.resolveWith((states) => Colors.white),
-                        uncheckedIconColor:
-                            ButtonState.resolveWith((states) => Colors.white),
-                        checkedDecoration: ButtonState.resolveWith((states) =>
-                            BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.blue)),
-                        uncheckedDecoration: ButtonState.resolveWith((states) =>
-                            BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.blue)),
-                        icon: _pr.isSortAscending
-                            ? FluentIcons.up
-                            : FluentIcons.down,
+                    icon: Tooltip(
+                      message:
+                          'Switch sort order between ascending or descending',
+                      child: Checkbox(
+                        semanticLabel: 'Sort ascending or descending',
+                        checked: _pr.isSortAscending,
+                        onChanged: (value) {
+                          setState(() {
+                            _pr.isSortAscending = value!;
+                            _pr.sortData();
+                          });
+                        },
+                        style: CheckboxThemeData(
+                          checkedIconColor:
+                              ButtonState.resolveWith((states) => Colors.white),
+                          uncheckedIconColor:
+                              ButtonState.resolveWith((states) => Colors.white),
+                          checkedDecoration: ButtonState.resolveWith((states) =>
+                              BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.blue)),
+                          uncheckedDecoration: ButtonState.resolveWith(
+                              (states) => BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.blue)),
+                          icon: _pr.isSortAscending
+                              ? FluentIcons.up
+                              : FluentIcons.down,
+                        ),
                       ),
                     ))
               ],
@@ -234,16 +248,17 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-                      title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for (int i = 0; i < columns.length - 1; i++)
-                              DatabaseCell(
-                                width: MediaQuery.of(context).size.width /
-                                    (columns.length + 1),
-                                text: columns[i],
-                              )
-                          ]),
+                      title: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: [
+                          for (int i = 0; i < columns.length - 1; i++)
+                            DatabaseCell(
+                              width: MediaQuery.of(context).size.width /
+                                  (columns.length),
+                              text: columns[i],
+                            )
+                        ]),
+                      ),
                       trailing: DatabaseCell(
                         text: columns[columns.length - 1],
                         width: trailingSize,

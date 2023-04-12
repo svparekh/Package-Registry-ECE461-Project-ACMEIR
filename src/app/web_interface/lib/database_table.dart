@@ -51,24 +51,27 @@ class DatabaseRow extends StatelessWidget {
         editSelected(value, cells);
       },
       selected: PackageRegistry().selectedData.contains(cells),
-      title: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['id']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['name']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['version']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: double.parse('${cells['rating']}').toStringAsFixed(2),
-        ),
-      ]),
+      title: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / (cells.length - 1),
+            text: '${cells['id']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / (cells.length - 1),
+            text: '${cells['name']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / (cells.length - 1),
+            text: '${cells['version']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / (cells.length - 1),
+            text: double.parse('${cells['rating']}').toStringAsFixed(2),
+          ),
+        ]),
+      ),
       trailing: SizedBox(
         width: trailingSize,
         child: FilledButton(

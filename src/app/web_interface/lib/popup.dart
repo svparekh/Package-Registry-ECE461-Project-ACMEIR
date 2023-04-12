@@ -2,6 +2,46 @@ import 'dart:async';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:web_interface/api.dart';
 
+showSuccessFailInfoBar(BuildContext context, bool success, String type) {
+  if (success) {
+    displayInfoBar(context, builder: (context, close) {
+      return InfoBar(
+        title: Text('Successful $type!'),
+        content: Text(
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : 'Deleting'} was successfuly completed.'),
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
+        ),
+        style: InfoBarThemeData(
+          decoration: (severity) {
+            return BoxDecoration(color: Colors.white);
+          },
+        ),
+        severity: InfoBarSeverity.success,
+      );
+    });
+  } else {
+    displayInfoBar(context, builder: (context, close) {
+      return InfoBar(
+        title: Text('Failed to $type!'),
+        content: Text(
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : 'Deleting'} could not be succesfuly completed. Please try again another time.'),
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
+        ),
+        style: InfoBarThemeData(
+          decoration: (severity) {
+            return BoxDecoration(color: Colors.white);
+          },
+        ),
+        severity: InfoBarSeverity.error,
+      );
+    });
+  }
+}
+
 Future<bool> showPackageDialog(BuildContext context,
     {required String type, List<Map<String, dynamic>>? packages}) async {
   // Type can be of types: 'Add', 'Update', or 'Delete'
@@ -28,7 +68,7 @@ Future<bool> showPackageDialog(BuildContext context,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${packages.length == 1 ? 'Package' : 'Packages'} currently eligible for update listed below will be updated.',
+                    '${packages.length == 1 ? 'Package' : 'Packages'} listed below will be updated if available.',
                     style: const TextStyle(fontSize: 16),
                   ),
                   for (Map<String, dynamic> pack in packages)
@@ -50,7 +90,7 @@ Future<bool> showPackageDialog(BuildContext context,
                 ],
               );
       } else {
-        body = Text('Invalid dialog type');
+        body = const Text('Invalid dialog type');
       }
       // Dialog
       return ContentDialog(
@@ -59,7 +99,7 @@ Future<bool> showPackageDialog(BuildContext context,
             stream: isWorkingStream.stream,
             builder: (context, snapshot) {
               return (snapshot.hasData && snapshot.data == true)
-                  ? SizedBox(
+                  ? const SizedBox(
                       height: 32, width: double.infinity, child: ProgressBar())
                   : body;
             }),
@@ -72,15 +112,23 @@ Future<bool> showPackageDialog(BuildContext context,
                       ? null
                       : () async {
                           isWorkingStream.add(true);
-                          if (type == 'Add') {
-                            APICaller.addPackage(url: controller.text);
-                          } else if (type == 'Update') {
-                            APICaller.updatePackages();
-                          } else if (type == 'Delete') {
-                            APICaller.deletePackages();
-                          }
-                          await Future.delayed(Duration(seconds: 2))
+
+                          await Future.delayed(const Duration(seconds: 2))
                               .then((value) => Navigator.pop(context, true));
+
+                          if (type == 'Add') {
+                            await APICaller.addPackage(url: controller.text)
+                                .then((value) => showSuccessFailInfoBar(
+                                    context, value, type));
+                          } else if (type == 'Update') {
+                            await APICaller.updatePackages(packages: packages!)
+                                .then((value) => showSuccessFailInfoBar(
+                                    context, value, type));
+                          } else if (type == 'Delete') {
+                            await APICaller.deletePackages(packages: packages!)
+                                .then((value) => showSuccessFailInfoBar(
+                                    context, value, type));
+                          }
                         },
                   child: Text(type),
                 );

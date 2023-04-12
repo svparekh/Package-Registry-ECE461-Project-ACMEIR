@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:web_interface/api.dart';
 
 import 'main.dart' show offwhite, offwhiteDark;
 import 'wavy_bg.dart' show WavingBackground;
@@ -111,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                     resetInProgress = true;
                   });
                   // RESET
-                  await Future.delayed(Duration(seconds: 2));
+                  await APICaller.factoryReset();
 
                   setState(() {
                     resetInProgress = false;
