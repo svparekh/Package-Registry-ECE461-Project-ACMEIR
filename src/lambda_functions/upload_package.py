@@ -4,6 +4,8 @@ import random
 
 def lambda_handler(event, context):
 
+    # NOTE: seems like in current API we do not have access to name, version, or id.
+    # So these are currently here for simple testing but probably need to be deleted soon.
     package_name = event["metadata"]["Name"]
     package_version = event["metadata"]["Version"]
     package_id = event["metadata"]["ID"]
@@ -25,11 +27,16 @@ def lambda_handler(event, context):
     
     # TODO: need to add error code return for bad rating
 
-    # TODO: Currently you can pass same package if you do it under different id, which I don't think should be allowed.
-    # to fix, would have to scan through all ids for specific name and compare
-    
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+
+
+    # TODO: We need to decide what is consistent between packages and what to query for to verify whether or not a package
+    # already exists. This is because there is not a package_id inputted like it used to be, so we can't use that to check.
+    # Below is slightly-updated old code, but the get with package_id and the conditionals on the ifs are going to need to 
+    # change.  
+
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.get(url).json()
+    # print(response)
     
     if not("error" in response):
         # id already exists
@@ -53,10 +60,11 @@ def lambda_handler(event, context):
             for i in range(10): # WARNING: will break database if can't find unused number in 10 tries
                 if "error" in response: break
                 package_id = str(random.randint(1000, 999999999)) # is this enough numbers?
-                url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+                url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
                 response = requests.get(url).json()
             
 
+    # TODO: The fields/names should be probably be changed and then synchronized with other files
     document = {
         "fields" : {
             "package_name" : {
@@ -80,45 +88,9 @@ def lambda_handler(event, context):
         }
     } 
 
-
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/name-to-id-lookup/" + package_name
-    pkg_name_ids_response = requests.get(url).json()
-    
-
-    if "error" in pkg_name_ids_response.keys():
-        if pkg_name_ids_response["error"]["status"] == "NOT_FOUND":
-            # make new entry
-            pkg_name_ids_response = {
-                "fields" : {
-                    package_id : {
-                        "stringValue" : " "
-                    }
-                }
-            }
-        else:
-            # TODO: internal problem - put good error return here
-            return pkg_name_ids_response # temporary
-    else:
-        # package name extry exists, so add field with new id
-        # id checking should have already been done above, so shouldn't have to worry about that
-        
-        pkg_name_ids_response["fields"][package_id] = {
-            "stringValue" : " "
-        }
-        
-        # pkg_name_ids_response looks like: {"name": "projects/acme-register/databases/(default)/documents/name-to-id-lookup/DavidTest2", "fields": {"3": {"stringValue": " "}, "4": {"stringValue": " "}}
-        pkg_name_ids_response.pop("name") # have to remove name or gives error
-        
-        url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/name-to-id-lookup/" + package_name
-        response = requests.delete(url).json() # unchecked
-        
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/name-to-id-lookup?documentId=" + package_name
-    response = requests.post(url, json.dumps(pkg_name_ids_response)).json()
-
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information?documentId=" + package_id
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
     
-    # This will probably change if the API changes again, because returning everything was not part of the old version
     response_body = { # from get-package
       "metadata": {
         "Name": package_name,

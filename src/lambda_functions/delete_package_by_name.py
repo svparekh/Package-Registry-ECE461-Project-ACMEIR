@@ -12,7 +12,7 @@ def lambda_handler(event, context):
     request_body = {
         "structuredQuery": {
             "from": [{
-                "collectionId": "acme-register-package-information",
+                "collectionId": "packages",
                 "allDescendants": True
             }],
             "where": {
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     }
 
     lookup_response = requests.post(url, json.dumps(request_body)).json()
-    # print(lookup_response)
+    # print(lookup_response) # NOTE: IF I DONT WORK, CHECK THIS PRINT STATEMENT!!!
     
     if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
     

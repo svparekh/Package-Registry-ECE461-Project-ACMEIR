@@ -11,3 +11,7 @@ Cargo.lock
 
 # folder used to store artefacts used for coverage reports
 coverage
+
+
+# pycache
+__pycache__
