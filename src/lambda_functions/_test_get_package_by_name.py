@@ -1,4 +1,4 @@
-from delete_package_by_name import lambda_handler as delete_by_name
+from get_package_by_name import lambda_handler as get_package_by_name
 from _fake_upload_package import lambda_handler as upload
 
 def settup():
@@ -18,8 +18,8 @@ def settup():
     try:
         ret = upload(event, 0)
         print(f"return: {ret}")
-    except:
-        print("caught exception")
+    except Exception as exception:
+        print("caught ", exception)
 
     event = {
         "metadata": {
@@ -28,7 +28,7 @@ def settup():
             "ID": "998"
         },
         "data": {
-            "Content": "Hello world",
+            "Content": "Hello different version",
             "URL": "something",
             "JSProgram": "string"
         }
@@ -37,21 +37,27 @@ def settup():
     try:
         ret = upload(event, 0)
         print(f"return: {ret}")
-    except:
-        print("caught exception")
+    except Exception as exception:
+        print("caught ", exception)
 
 def test1():
     event = {
         'path': "/package/byName/test"
     }
-    ret = delete_by_name(event, 0)
+    ret = get_package_by_name(event, 0)
     print(f"return: {ret}")
+
 
 def test2():
     try:
-        test1()
-    except:
-        print("caught exception")
+        event = {
+            'path': "/package/byName/thisPackageDoesNotExist"
+        }
+        ret = get_package_by_name(event, 0)
+        print(f"return: {ret}")
+    except Exception as exception:
+        print("caught ",exception)
+
 
 def main():
     settup()

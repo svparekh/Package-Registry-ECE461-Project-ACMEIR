@@ -22,7 +22,7 @@ def lambda_handler(event, context):
                     },
                     "op": "EQUAL",
                     "value": {
-                        "stringValue": "test"
+                        "stringValue": package_name
                     }
                 }
             }

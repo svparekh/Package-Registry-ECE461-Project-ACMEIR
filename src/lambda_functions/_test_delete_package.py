@@ -1,5 +1,5 @@
 from delete_package import lambda_handler as delete
-from upload_package import lambda_handler as upload
+from _fake_upload_package import lambda_handler as upload
 
 def settup():
     event = {

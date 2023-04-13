@@ -7,14 +7,33 @@ def lambda_handler(event, context):
 
   # TODO: NEED TO ADD USER, DATE, AND ACTION TO PACKAGE HISTORY ENTRIES!
 
-  url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/name-to-id-lookup/" + package_name
+  url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents:runQuery"
+  request_body = {
+    "structuredQuery": {
+        "from": [{
+            "collectionId": "packages",
+            "allDescendants": True
+        }],
+        "where": {
+            "fieldFilter": {
+                "field": {
+                    "fieldPath": "package_name"
+                },
+                "op": "EQUAL",
+                "value": {
+                    "stringValue": package_name
+                }
+            }
+        }
+    }
+  }
 
-  lookup_response = requests.get(url).json()
+  lookup_response = requests.post(url, json.dumps(request_body)).json()
 
-  if not("error" in lookup_response):
+  if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
     history = []
-    for package_id in lookup_response['fields']:
-      url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+    for document in lookup_response:
+      url = "https://firestore.googleapis.com/v1/" + document['document']['name']
       response = requests.get(url).json()
       
       package_name = response['fields']['package_name']['stringValue']
@@ -22,11 +41,17 @@ def lambda_handler(event, context):
       package_id = response['fields']['package_id']['stringValue']
       
       history_entry = {
-        "metadata": {
+        "User": {
+          "name": "UNIMPLEMENTED",
+          "isAdmin": True
+        },
+        "Date": "UNIMPLEMENTED",
+        "PackageMetadata": {
           "Name": package_name,
           "Version": package_version,
           "ID": package_id
-        }
+        },
+        "Action": "UNIMPLEMENTED"
       }
       history.append(history_entry)
 
@@ -48,16 +73,3 @@ def lambda_handler(event, context):
   }
 
   return proxy_integration_response
-
-
-
-
-
-
-
-
-  url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_name
-
-  response = requests.get(url).json()
-  
-  
