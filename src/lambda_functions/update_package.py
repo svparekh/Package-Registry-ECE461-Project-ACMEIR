@@ -21,24 +21,24 @@ def lambda_handler(event, context):
     
     # TODO: check that the id passed in to the call and the one in the metadata is the same
 
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.get(url).json()
     
     if "error" in response or response["fields"]['package_name']['stringValue'] != package_name or response["fields"]['package_version']['stringValue'] != package_version:
-            
-            response_body = { # IS THE DESCRIPTION SOMETHING THAT GOES INTO THE RESPONSE?
-                "description": "Package does not exist."
-            }
-            
-            raise Exception("Invalid.Package_does_not_exist")
-            
-            # proxy_integration_response = { 
-            #     "isBase64Encoded": False,
-            #     "statusCode": 404,
-            #     "headers": {},
-            #     "body": json.dumps(response_body)
-            # }
-            
+        
+        response_body = { # IS THE DESCRIPTION SOMETHING THAT GOES INTO THE RESPONSE?
+            "description": "Package does not exist."
+        }
+        
+        raise Exception("Invalid.Package_does_not_exist")
+        
+        # proxy_integration_response = { 
+        #     "isBase64Encoded": False,
+        #     "statusCode": 404,
+        #     "headers": {},
+        #     "body": json.dumps(response_body)
+        # }
+        
             # return proxy_integration_response
 
     document = {
@@ -64,10 +64,10 @@ def lambda_handler(event, context):
         }
     } 
 
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information/" + package_id
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.delete(url).json() # unchecked
         
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/acme-register-package-information?documentId=" + package_id
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
     
     response_body = { # IS THE DESCRIPTION SOMETHING THAT GOES INTO THE RESPONSE?

@@ -7,6 +7,7 @@ def lambda_handler(event, context):
 
   # TODO: NEED TO ADD USER, DATE, AND ACTION TO PACKAGE HISTORY ENTRIES!
 
+  # see delete_package_by_name on links about query
   url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents:runQuery"
   request_body = {
     "structuredQuery": {
