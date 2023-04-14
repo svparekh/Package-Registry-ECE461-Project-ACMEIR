@@ -106,12 +106,4 @@ def lambda_handler(event, context):
     
     return response_body
     
-    # proxy_integration_response = { # from get-package
-    #     "isBase64Encoded": False,
-    #     "statusCode": 201,
-    #     "headers": {},
-    #     "body": json.dumps(response_body)
-    # }
-    
-    # return proxy_integration_response
 

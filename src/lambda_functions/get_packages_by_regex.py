@@ -4,7 +4,7 @@ import re
 
 def lambda_handler(event, context):
   
-    package_regex = event['path'][17:] # /package/byregex/_______
+    package_regex = event['RegEx']
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/"
 
