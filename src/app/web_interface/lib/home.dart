@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'data.dart' show PackageRegistry;
 import 'popup.dart' show showPackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
-import 'main.dart' show PresetValues, columns;
+import 'main.dart' show PresetValues;
 import 'wavy_bg.dart' show WavingBackground;
 
 class HomePage extends StatefulWidget {
