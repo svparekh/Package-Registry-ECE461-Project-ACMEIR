@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:web_interface/api.dart';
 
-import 'main.dart' show offwhite, offwhiteDark;
+import 'main.dart' show PresetValues;
 import 'wavy_bg.dart' show WavingBackground;
 
 class LoginPage extends StatefulWidget {
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
               maxHeight: 500, maxWidth: 400, minHeight: 100, minWidth: 100),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
-            color: offwhite,
+            color: PresetValues.offwhite,
           ),
           child: FirebaseAuth.instance.currentUser == null
               ? _buildLogin()
@@ -253,7 +253,8 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20), color: offwhite),
+              borderRadius: BorderRadius.circular(20),
+              color: PresetValues.offwhite),
           child: Text(
             "Too many attempts, try again later",
             style: TextStyle(color: Colors.red),
@@ -323,9 +324,10 @@ class LoginTextBox extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       decoration: BoxDecoration(
-          color: offwhiteDark,
-          border:
-              Border.all(color: invalid ? Colors.red : offwhiteDark, width: 2),
+          color: PresetValues.offwhiteDark,
+          border: Border.all(
+              color: invalid ? Colors.red : PresetValues.offwhiteDark,
+              width: 2),
           borderRadius: BorderRadius.circular(12)),
       constraints: const BoxConstraints(maxWidth: 500),
       width: MediaQuery.of(context).size.width / 1.5,

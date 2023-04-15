@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 import 'data.dart' show PackageRegistry;
-import 'main.dart' show trailingSize;
+import 'main.dart' show PresetValues;
 import 'popup.dart' show showPropertiesDialog;
 
 class DatabaseTable extends StatelessWidget {
@@ -73,7 +73,7 @@ class DatabaseRow extends StatelessWidget {
         ]),
       ),
       trailing: SizedBox(
-        width: trailingSize,
+        width: PresetValues.trailingSize,
         child: FilledButton(
           onPressed: () async {
             await showPropertiesDialog(context, data: cells);

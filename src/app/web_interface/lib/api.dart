@@ -1,4 +1,4 @@
-import 'package:http/http.dart' show Response, delete, get, post, put;
+import 'package:http/http.dart' show get, delete, post, put;
 
 class APICaller {
   // API Url
@@ -9,20 +9,21 @@ class APICaller {
   static const String _packageByID = "$apiBaseUrl/package";
   // API Endpoints
   static const String authEndpoint = "$apiBaseUrl/authenticate";
-  static String packageByNameEndpoint(String name) => '$_packageByName/$name';
-  static String packageByIdEndpoint(int id) => '$_packageByID/$id';
-  static String packageRateByIdEndpoint(int id) => '$_packageByID/$id/rate';
   static const String addEndpoint = "$apiBaseUrl/package";
   static const String packagesEndpoint = "$apiBaseUrl/packages";
   static const String resetEndpoint = "$apiBaseUrl/reset";
+  static String packageByNameEndpoint(String name) => '$_packageByName/$name';
+  static String packageByIdEndpoint(int id) => '$_packageByID/$id';
+  static String packageRateByIdEndpoint(int id) => '$_packageByID/$id/rate';
   // For testing
-  static String test = "https://";
+  static String test = "/";
 
   static Future<bool> addPackage({required String url}) async {
     try {
-      var apiUrl = Uri.parse(test);
+      Uri apiUrl = Uri.parse(test);
       var response = await post(apiUrl);
       if (response.statusCode == 200) {
+        // Something
         return true;
       }
     } catch (e) {
@@ -33,42 +34,51 @@ class APICaller {
 
   static Future<bool> deletePackages(
       {required List<Map<String, dynamic>> packages}) async {
-    try {
-      var apiUrl = Uri.parse(test);
-      var response = await delete(apiUrl);
-      if (response.statusCode == 200) {
-        return true;
+    bool isComplete = true;
+    for (Map<String, dynamic> package in packages) {
+      try {
+        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['id']));
+        var response = await delete(Uri.parse(test));
+        if (response.statusCode == 200) {
+          // Something
+        }
+      } catch (e) {
+        print(e);
+        isComplete = false;
       }
-    } catch (e) {
-      print(e);
     }
-    return false;
+    return isComplete;
   }
 
   static Future<bool> updatePackages(
       {required List<Map<String, dynamic>> packages}) async {
-    try {
-      var apiUrl = Uri.parse(test);
-      var response = await put(apiUrl);
-      if (response.statusCode == 200) {
-        return true;
+    bool isComplete = true;
+    for (Map<String, dynamic> package in packages) {
+      try {
+        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['id']));
+        var response = await put(Uri.parse(test));
+        if (response.statusCode == 200) {
+          // Something
+        }
+      } catch (e) {
+        print(e);
+        isComplete = false;
       }
-    } catch (e) {
-      print(e);
     }
-    return false;
+    return isComplete;
   }
 
   static Future<bool> factoryReset() async {
     try {
       Uri apiUrl = Uri.parse(resetEndpoint);
-      Response response = await delete(apiUrl);
+      var response = await delete(apiUrl);
       if (response.statusCode == 200) {
         print(response);
         print(response.body);
+        // Something
         return true;
       }
-    } catch (e) {
+    } on Error catch (e) {
       print(e);
     }
     return false;

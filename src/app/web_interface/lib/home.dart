@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'data.dart' show PackageRegistry;
 import 'popup.dart' show showPackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
-import 'main.dart' show columns, offwhite, trailingSize;
+import 'main.dart' show PresetValues, columns;
 import 'wavy_bg.dart' show WavingBackground;
 
 class HomePage extends StatefulWidget {
@@ -161,13 +161,13 @@ class _HomePageState extends State<HomePage> {
                       semanticsLabel: 'Sort method selection dropdown',
                     ),
                     items: [
-                      for (int i = 0; i < columns.length - 1; i++)
+                      for (int i = 0; i < PresetValues.columns.length - 1; i++)
                         MenuFlyoutItem(
-                          text: Text(columns[i]),
+                          text: Text(PresetValues.columns[i]),
                           onPressed: () {
                             setState(
                               () {
-                                _pr.curSortMethod = columns[i];
+                                _pr.curSortMethod = PresetValues.columns[i];
                                 _pr.sortData();
                               },
                             );
@@ -219,7 +219,8 @@ class _HomePageState extends State<HomePage> {
                   bottom: 25, left: 50, right: 50, top: 0),
               child: Container(
                 decoration: BoxDecoration(
-                    color: offwhite, borderRadius: BorderRadius.circular(15)),
+                    color: PresetValues.offwhite,
+                    borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
                     // Column names
@@ -251,17 +252,20 @@ class _HomePageState extends State<HomePage> {
                       title: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(children: [
-                          for (int i = 0; i < columns.length - 1; i++)
+                          for (int i = 0;
+                              i < PresetValues.columns.length - 1;
+                              i++)
                             DatabaseCell(
                               width: MediaQuery.of(context).size.width /
-                                  (columns.length),
-                              text: columns[i],
+                                  (PresetValues.columns.length),
+                              text: PresetValues.columns[i],
                             )
                         ]),
                       ),
                       trailing: DatabaseCell(
-                        text: columns[columns.length - 1],
-                        width: trailingSize,
+                        text: PresetValues
+                            .columns[PresetValues.columns.length - 1],
+                        width: PresetValues.trailingSize,
                       ),
                     ),
                     // List of data

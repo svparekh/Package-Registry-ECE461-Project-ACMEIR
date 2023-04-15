@@ -10,17 +10,19 @@ import 'login.dart' show LoginPage;
 //
 // Constants
 
-const List<String> columns = [
-  "ID",
-  "Package Name",
-  "Version",
-  "Rating",
-  "Properties"
-];
-const double trailingSize = 100.0;
-const String siteName = 'ACME Package Registry';
-const Color offwhite = Color.fromARGB(255, 241, 241, 241);
-const Color offwhiteDark = Color.fromARGB(255, 222, 222, 222);
+class PresetValues {
+  static const double trailingSize = 100.0;
+  static const String siteName = 'ACME Package Registry';
+  static const Color offwhite = Color.fromARGB(255, 241, 241, 241);
+  static const Color offwhiteDark = Color.fromARGB(255, 222, 222, 222);
+  static const List<String> columns = [
+    "ID",
+    "Package Name",
+    "Version",
+    "Rating",
+    "Properties"
+  ];
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +43,6 @@ class WebApp extends StatefulWidget {
 }
 
 class _WebAppState extends State<WebApp> with WidgetsBindingObserver {
-  // Theme
-  final ThemeMode _themeMode = ThemeMode.system;
   @override
   void initState() {
     super.initState();
@@ -67,11 +67,9 @@ class _WebAppState extends State<WebApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return FluentApp(
       debugShowCheckedModeBanner: false,
-      title: siteName,
-      themeMode: _themeMode,
+      title: PresetValues.siteName,
       theme: FluentThemeData(brightness: Brightness.light),
-      darkTheme: FluentThemeData(brightness: Brightness.dark),
-      home: const NavPage(title: siteName),
+      home: const NavPage(title: PresetValues.siteName),
     );
   }
 }
@@ -103,7 +101,7 @@ class _NavPageState extends State<NavPage> {
       key: _viewKey,
       appBar: const NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: Text(siteName, style: TextStyle(fontSize: 18)),
+        title: Text(PresetValues.siteName, style: TextStyle(fontSize: 18)),
       ),
       pane: NavigationPane(
           selected: _pageIndex,

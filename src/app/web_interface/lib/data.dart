@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'main.dart' show columns;
+import 'main.dart' show PresetValues;
 
 class PackageRegistry {
   // Make this class have only a single instance
@@ -12,7 +12,7 @@ class PackageRegistry {
 
   // vars (leading _ means internal)
   bool isSortAscending = true;
-  String curSortMethod = columns[0];
+  String curSortMethod = PresetValues.columns[0];
   List<Map<String, dynamic>>? _data;
   List<Map<String, dynamic>> selectedData = [];
   List<Map<String, dynamic>> filteredData = [];
@@ -76,14 +76,14 @@ class PackageRegistry {
     }
 
     // Decide which column to sort
-    if (curSortMethod == columns[0]) {
+    if (curSortMethod == PresetValues.columns[0]) {
       _data!.sort(
         (a, b) => isSortAscending
             ? int.parse('${a['id']}').compareTo(int.parse('${b['id']}'))
             : int.parse('${b['id']}').compareTo(int.parse('${a['id']}')),
       );
       return true;
-    } else if (curSortMethod == columns[1]) {
+    } else if (curSortMethod == PresetValues.columns[1]) {
       _data!.sort(
         (a, b) => isSortAscending
             ? '${a['name']}'
@@ -94,7 +94,7 @@ class PackageRegistry {
                 .compareTo('${a['name']}'.toLowerCase()),
       );
       return true;
-    } else if (curSortMethod == columns[2]) {
+    } else if (curSortMethod == PresetValues.columns[2]) {
       _data!.sort(
         (a, b) {
           // split 1.0.0 into ['1', '0', '0']
@@ -145,7 +145,7 @@ class PackageRegistry {
         },
       );
       return true;
-    } else if (curSortMethod == columns[3]) {
+    } else if (curSortMethod == PresetValues.columns[3]) {
       _data!.sort(
         (a, b) => isSortAscending
             ? '${a['rating']}'
