@@ -1,5 +1,7 @@
 from get_package_by_name import lambda_handler as get_package_by_name
 from _fake_upload_package import lambda_handler as upload
+from get_package import lambda_handler as get_package
+from update_package import lambda_handler as update_package
 
 def settup():
     event = {
@@ -20,6 +22,27 @@ def settup():
         print(f"return: {ret}")
     except Exception as exception:
         print("caught ", exception)
+
+    event = {
+        'path': "/package/999"
+    }
+    ret = get_package(event, 0)
+    print(f"return: {ret}")
+
+    event = {
+        "metadata": {
+            "Name": "test",
+            "Version": "1.0.0",
+            "ID": "999"
+        },
+        "data": {
+            "Content": "This is now updated",
+            "URL": "This is updated too",
+            "JSProgram": "string"
+        }
+    }
+    ret = update_package(event, 0)
+    print(f"return: {ret}")
 
     event = {
         "metadata": {

@@ -40,21 +40,22 @@ def lambda_handler(event, context):
       package_name = response['fields']['name']['stringValue']
       package_version = response['fields']['version']['stringValue']
       package_id = response['fields']['id']['stringValue']
-      
-      history_entry = {
-        "User": {
-          "name": "UNIMPLEMENTED",
-          "isAdmin": True
-        },
-        "Date": "UNIMPLEMENTED",
-        "PackageMetadata": {
-          "Name": package_name,
-          "Version": package_version,
-          "ID": package_id
-        },
-        "Action": "UNIMPLEMENTED"
-      }
-      history.append(history_entry)
+      history_entries = response['fields']['history']['arrayValue']['values']
+      for entry in history_entries:
+        history_entry = {
+          "User": {
+            "name": entry['mapValue']['fields']['User']['mapValue']['fields']['name']['stringValue'],
+            "isAdmin": entry['mapValue']['fields']['User']['mapValue']['fields']['isAdmin']['booleanValue']
+          },
+          "Date": entry['mapValue']['fields']['Date']['stringValue'],
+          "PackageMetadata": {
+            "Name": package_name,
+            "Version": package_version,
+            "ID": package_id
+          },
+          "Action": entry['mapValue']['fields']['Action']['stringValue']
+        }
+        history.append(history_entry)
 
 
     proxy_integration_response = {

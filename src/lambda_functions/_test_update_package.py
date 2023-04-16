@@ -7,7 +7,7 @@ def settup():
         'path': "/package/byName/test"
     }
     ret = delete_by_name(event, 0)
-    print(f"return: {ret}")
+    print(f"setup del_by_name: {ret}")
     
     event = {
         "metadata": {
@@ -23,9 +23,9 @@ def settup():
     }
     try:
         ret = upload(event, 0)
-        print(f"return: {ret}")
+        print(f"setup upload: {ret}")
     except Exception as exception:
-        print(exception)
+        print(f"setup upload: {exception}")
 
 def test1():
     event = {

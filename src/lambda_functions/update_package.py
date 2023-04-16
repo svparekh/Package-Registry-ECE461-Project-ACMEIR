@@ -30,6 +30,7 @@ def lambda_handler(event, context):
         
         raise Exception("Invalid.Package_does_not_exist")
         
+    # for reference
     # document = {
     #     "fields" : {
     #         "name" : {
@@ -53,24 +54,29 @@ def lambda_handler(event, context):
     #         "history" : {
     #             "arrayValue" : {
     #                 'values' : [
-    #                     {'mapValue': {
-    #                         'fields': {
-    #                             'Action': {
-    #                                 'stringValue': 'CREATE'
-    #                             }, 
-    #                             'User': {
-    #                                 'mapValue': {
-    #                                     'fields': {
-    #                                         'name': {
-    #                                             'stringValue': 'UNIMPLEMENTED'
-    #                                         }, 
-    #                                         'isAdmin': {
-    #                                             'booleanValue': True
+    #                     {
+    #                         'mapValue': {
+    #                             'fields': {
+    #                                 'Action': {
+    #                                     'stringValue': 'CREATE'
+    #                                 }, 
+    #                                 'User': {
+    #                                     'mapValue': {
+    #                                         'fields': {
+    #                                             'name': {
+    #                                                 'stringValue': 'UNIMPLEMENTED'
+    #                                             }, 
+    #                                             'isAdmin': {
+    #                                                 'booleanValue': True
+    #                                             }
     #                                         }
     #                                     }
+    #                                 }, 
+    #                                 'Date': {
+    #                                     'stringValue': date
     #                                 }
-    #                             }, 
-    #                             'Date': {'stringValue': date}}}
+    #                             }
+    #                         }
     #                     }
     #                 ]
     #             }
@@ -114,8 +120,7 @@ def lambda_handler(event, context):
 
     document['fields']['history']['arrayValue']['values'].append(history_entry)
 
-    document.pop('name')
-
+    document.pop('name') # NOT the name field; necessary to remove for posting
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.delete(url).json() # unchecked

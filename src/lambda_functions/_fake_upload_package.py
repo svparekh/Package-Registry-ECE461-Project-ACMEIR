@@ -37,7 +37,7 @@ def lambda_handler(event, context):
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.get(url).json()
-    print(response)
+    # print(response)
     
     if not("error" in response):
         # id already exists
@@ -116,7 +116,7 @@ def lambda_handler(event, context):
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
-    print(response)
+    # print(response)
     
     response_body = { # from get-package
       "metadata": {

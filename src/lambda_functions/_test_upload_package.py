@@ -19,6 +19,7 @@ def test1():
         print(f"return: {ret}")
     except Exception as exception:
         print(exception)
+        pass
 
 
 def test2():
