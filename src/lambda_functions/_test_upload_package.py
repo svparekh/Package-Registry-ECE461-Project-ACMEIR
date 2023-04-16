@@ -17,8 +17,8 @@ def test1():
     try:
         ret = upload_package(event, 0)
         print(f"return: {ret}")
-    except:
-        print("caught exception")
+    except Exception as exception:
+        print(exception)
 
 
 def test2():

@@ -1,6 +1,7 @@
 import json
 import requests
 import random
+import datetime
 
 def lambda_handler(event, context):
 
@@ -40,19 +41,11 @@ def lambda_handler(event, context):
     
     if not("error" in response):
         # id already exists
-        if response["fields"]['package_name']['stringValue'] == package_name and response["fields"]['package_version']['stringValue'] == package_version:
+        if response["fields"]['name']['stringValue'] == package_name and response["fields"]['version']['stringValue'] == package_version:
             # package already exists
             
             raise Exception("Invalid.Package_exists_already")
             
-            # proxy_integration_response = { 
-            #     "isBase64Encoded": False,
-            #     "statusCode": 409,
-            #     "headers": {},
-            #     "body": json.dumps(response_body)
-            # }
-            
-            # return proxy_integration_response
         else:
             # package does not exist
              
@@ -63,33 +56,67 @@ def lambda_handler(event, context):
                 url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
                 response = requests.get(url).json()
             
+    # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
+    date = datetime.datetime.utcnow().isoformat()
+    date = date[0:date.index('.')]+'Z'
 
     # TODO: The fields/names should be probably be changed and then synchronized with other files
     document = {
         "fields" : {
-            "package_name" : {
+            "name" : {
                 "stringValue" : package_name
             },
-            "package_version" : {
+            "version" : {
                 "stringValue" : package_version
             },
-            "package_id" : {
+            "id" : {
                 "stringValue" : package_id
             },
-            "package_content" : {
+            "content" : {
                 "stringValue" : package_content
             },
-            "package_url" : {
+            "url" : {
                 "stringValue" : package_url
             },
-            "package_jsprogram" : {
+            "jsprogram" : {
                 "stringValue" : package_jsprogram
+            },
+            "history" : {
+                "arrayValue" : {
+                    'values' : [
+                        {
+                            'mapValue': {
+                                'fields': {
+                                    'Action': {
+                                        'stringValue': 'CREATE'
+                                    }, 
+                                    'User': {
+                                        'mapValue': {
+                                            'fields': {
+                                                'name': {
+                                                    'stringValue': 'UNIMPLEMENTED'
+                                                }, 
+                                                'isAdmin': {
+                                                    'booleanValue': True
+                                                }
+                                            }
+                                        }
+                                    }, 
+                                    'Date': {
+                                        'stringValue': date
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
             }
         }
     } 
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
+    # print(response)
     
     response_body = { # from get-package
       "metadata": {

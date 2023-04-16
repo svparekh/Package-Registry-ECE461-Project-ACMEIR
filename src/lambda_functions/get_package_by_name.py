@@ -18,7 +18,7 @@ def lambda_handler(event, context):
         "where": {
             "fieldFilter": {
                 "field": {
-                    "fieldPath": "package_name"
+                    "fieldPath": "name"
                 },
                 "op": "EQUAL",
                 "value": {
@@ -37,9 +37,9 @@ def lambda_handler(event, context):
       url = "https://firestore.googleapis.com/v1/" + document['document']['name']
       response = requests.get(url).json()
       
-      package_name = response['fields']['package_name']['stringValue']
-      package_version = response['fields']['package_version']['stringValue']
-      package_id = response['fields']['package_id']['stringValue']
+      package_name = response['fields']['name']['stringValue']
+      package_version = response['fields']['version']['stringValue']
+      package_id = response['fields']['id']['stringValue']
       
       history_entry = {
         "User": {
@@ -74,3 +74,5 @@ def lambda_handler(event, context):
   }
 
   return proxy_integration_response
+
+

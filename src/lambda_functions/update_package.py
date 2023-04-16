@@ -1,5 +1,6 @@
 import json
 import requests
+import datetime
 
 def lambda_handler(event, context):
     #Chase: 
@@ -22,63 +23,105 @@ def lambda_handler(event, context):
     # TODO: check that the id passed in to the call and the one in the metadata is the same
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
-    response = requests.get(url).json()
+    document = requests.get(url).json()
+    # print(document)
     
-    if "error" in response or response["fields"]['package_name']['stringValue'] != package_name or response["fields"]['package_version']['stringValue'] != package_version:
-        
-        response_body = { # IS THE DESCRIPTION SOMETHING THAT GOES INTO THE RESPONSE?
-            "description": "Package does not exist."
-        }
+    if "error" in document or document["fields"]['name']['stringValue'] != package_name or document["fields"]['version']['stringValue'] != package_version:
         
         raise Exception("Invalid.Package_does_not_exist")
         
-        # proxy_integration_response = { 
-        #     "isBase64Encoded": False,
-        #     "statusCode": 404,
-        #     "headers": {},
-        #     "body": json.dumps(response_body)
-        # }
-        
-            # return proxy_integration_response
+    # document = {
+    #     "fields" : {
+    #         "name" : {
+    #             "stringValue" : package_name
+    #         },
+    #         "version" : {
+    #             "stringValue" : package_version
+    #         },
+    #         "id" : {
+    #             "stringValue" : package_id
+    #         },
+    #         "content" : {
+    #             "stringValue" : package_content
+    #         },
+    #         "url" : {
+    #             "stringValue" : package_url
+    #         },
+    #         "jsprogram" : {
+    #             "stringValue" : package_jsprogram
+    #         },
+    #         "history" : {
+    #             "arrayValue" : {
+    #                 'values' : [
+    #                     {'mapValue': {
+    #                         'fields': {
+    #                             'Action': {
+    #                                 'stringValue': 'CREATE'
+    #                             }, 
+    #                             'User': {
+    #                                 'mapValue': {
+    #                                     'fields': {
+    #                                         'name': {
+    #                                             'stringValue': 'UNIMPLEMENTED'
+    #                                         }, 
+    #                                         'isAdmin': {
+    #                                             'booleanValue': True
+    #                                         }
+    #                                     }
+    #                                 }
+    #                             }, 
+    #                             'Date': {'stringValue': date}}}
+    #                     }
+    #                 ]
+    #             }
+    #         }
+    #     }
+    # } 
 
-    document = {
-        "fields" : {
-            "package_name" : {
-                "stringValue" : package_name
-            },
-            "package_version" : {
-                "stringValue" : package_version
-            },
-            "package_id" : {
-                "stringValue" : package_id
-            },
-            "package_content" : {
-                "stringValue" : package_content
-            },
-            "package_url" : {
-                "stringValue" : package_url
-            },
-            "package_jsprogram" : {
-                "stringValue" : package_jsprogram
+    # TODO: do we need to check that union type is maintained here?
+    if package_content != 'notFound': document["fields"]['content']['stringValue'] = package_content
+    if package_url != 'notFound': document["fields"]['url']['stringValue'] = package_url
+    if package_jsprogram != 'notFound': document["fields"]['jsprogram']['stringValue'] = package_jsprogram
+
+    # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
+    date = datetime.datetime.utcnow().isoformat()
+    date = date[0:date.index('.')]+'Z'
+
+    history_entry = {
+        'mapValue': {
+            'fields': {
+                'Action': {
+                    'stringValue': 'UPDATE'
+                }, 
+                'User': {
+                    'mapValue': {
+                        'fields': {
+                            'name': {
+                                'stringValue': 'UNIMPLEMENTED'
+                            }, 
+                            'isAdmin': {
+                                'booleanValue': True
+                            }
+                        }
+                    }
+                }, 
+                'Date': {
+                    'stringValue': date
+                }
             }
         }
-    } 
+    }
+
+    document['fields']['history']['arrayValue']['values'].append(history_entry)
+
+    document.pop('name')
+
 
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + package_id
     response = requests.delete(url).json() # unchecked
         
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
+    # print(response)
     
-    response_body = { # IS THE DESCRIPTION SOMETHING THAT GOES INTO THE RESPONSE?
-        "description": "Version is updated."
-    }
-    
-    # proxy_integration_response = { 
-    #     "isBase64Encoded": False,
-    #     "statusCode": 200,
-    #     "headers": {},
-    #     "body": json.dumps(response_body)
-    # }
-    
-    return #proxy_integration_response
+    return 

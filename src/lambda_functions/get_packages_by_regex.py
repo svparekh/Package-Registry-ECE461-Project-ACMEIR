@@ -12,9 +12,9 @@ def lambda_handler(event, context):
     
     matching_packages = []
     for document in documents:
-        package_name = document['fields']['package_name']['stringValue']
-        package_version = document['fields']['package_version']['stringValue']
-        package_id = document['fields']['package_id']['stringValue']
+        package_name = document['fields']['name']['stringValue']
+        package_version = document['fields']['version']['stringValue']
+        package_id = document['fields']['id']['stringValue']
 
         if nameMatchesRegex(package_name, package_regex):
             matching_packages.append({"Name" : package_name, "Version" : package_version, "ID" : package_id})

@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         documents = response['documents']
         
         for document in documents:
-            url = "https://firestore.googleapis.com/v1/" + document["name"]
+            url = "https://firestore.googleapis.com/v1/" + document["name"] # note that this isn't the 'name' field
             response = requests.delete(url).json()
 
     proxy_integration_response = {

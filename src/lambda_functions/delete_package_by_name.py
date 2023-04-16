@@ -3,7 +3,7 @@ import requests
 
 def lambda_handler(event, context):
 
-    package_name = event['path'][16:] # /package/byName/_______
+    name = event['path'][16:] # /package/byName/_______
 
     #  url and request from https://stackoverflow.com/questions/60486537/firebase-firestore-rest-request-query-and-filter
     # also looked at https://stackoverflow.com/questions/66262701/only-structured-queries-are-supported-firestore-api-rest
@@ -18,11 +18,11 @@ def lambda_handler(event, context):
             "where": {
                 "fieldFilter": {
                     "field": {
-                        "fieldPath": "package_name"
+                        "fieldPath": "name"
                     },
                     "op": "EQUAL",
                     "value": {
-                        "stringValue": package_name
+                        "stringValue": name
                     }
                 }
             }
