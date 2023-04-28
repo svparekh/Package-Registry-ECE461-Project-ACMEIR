@@ -28,7 +28,15 @@ def lambda_handler(event, context):
     
     if "error" in document or document["fields"]['name']['stringValue'] != package_name or document["fields"]['version']['stringValue'] != package_version:
         
-        raise Exception("Invalid.Package_does_not_exist")
+        return {
+            "statusCode": 404,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Package does not exist."
+            })
+        }
         
     # for reference
     # document = {
@@ -127,6 +135,13 @@ def lambda_handler(event, context):
         
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId=" + package_id
     response = requests.post(url, json.dumps(document)).json()
-    # print(response)
     
-    return 
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({
+            "error": "Version is updated."
+        })
+    }

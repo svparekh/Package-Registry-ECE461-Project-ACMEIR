@@ -18,7 +18,7 @@ def lambda_handler(event, context):
             "where": {
                 "fieldFilter": {
                     "field": {
-                        "fieldPath": "name"
+                        "fieldPath": "Name"
                     },
                     "op": "EQUAL",
                     "value": {
@@ -38,20 +38,22 @@ def lambda_handler(event, context):
             url = "https://firestore.googleapis.com/v1/" + document['document']['name']
             delete_response = requests.delete(url).json()
 
-        proxy_integration_response = {
-            "isBase64Encoded": False,
+        return {
             "statusCode": 200,
-            "headers": {},
-            "body": "Success - Package(s) deleted",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": json.dumps({
+                "error": "Package is deleted."
+            })
         }
     
-        return proxy_integration_response
-    
-    proxy_integration_response = {
-        "isBase64Encoded": False,
+    return {
         "statusCode": 404,
-        "headers": {},
-        "body": "Failure - Package does not exist",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({
+            "error": "Package does not exist."
+        })
     }
-
-    return proxy_integration_response

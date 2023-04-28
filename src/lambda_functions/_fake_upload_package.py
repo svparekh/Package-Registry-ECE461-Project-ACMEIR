@@ -63,19 +63,19 @@ def lambda_handler(event, context):
     # TODO: The fields/names should be probably be changed and then synchronized with other files
     document = {
         "fields" : {
-            "name" : {
+            "Name" : {
                 "stringValue" : package_name
             },
-            "version" : {
+            "Version" : {
                 "stringValue" : package_version
             },
-            "id" : {
+            "Id" : {
                 "stringValue" : package_id
             },
-            "content" : {
+            "Content" : {
                 "stringValue" : package_content
             },
-            "url" : {
+            "URL" : {
                 "stringValue" : package_url
             },
             "jsprogram" : {
