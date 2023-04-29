@@ -35,8 +35,12 @@ def lambda_handler(event, context):
     if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
     
         for document in lookup_response:
+            print(document)
             url = "https://firestore.googleapis.com/v1/" + document['document']['name']
             delete_response = requests.delete(url).json()
+            # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+            url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+document['document']["fields"]["ID"]['stringValue']
+            response = requests.delete(url)
 
         return {
             "statusCode": 200,
