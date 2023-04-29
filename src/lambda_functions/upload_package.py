@@ -81,7 +81,7 @@ def lambda_handler(event, context):
             "jsprogram" : {
                 "stringValue" : package_jsprogram
             },
-            "history" : {
+            "History" : {
                 "arrayValue" : {
                     'values' : [
                         {

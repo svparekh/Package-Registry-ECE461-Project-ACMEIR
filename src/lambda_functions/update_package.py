@@ -126,7 +126,7 @@ def lambda_handler(event, context):
         }
     }
 
-    document['fields']['history']['arrayValue']['values'].append(history_entry)
+    document['fields']['History']['arrayValue']['values'].append(history_entry)
 
     document.pop('name') # NOT the name field; necessary to remove for posting
 
@@ -142,6 +142,6 @@ def lambda_handler(event, context):
             "Content-Type": "application/json"
         },
         "body": json.dumps({
-            "error": "Version is updated."
+            "message": "Version is updated."
         })
     }

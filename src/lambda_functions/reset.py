@@ -19,12 +19,16 @@ def lambda_handler(event, context):
         for document in documents:
             url = "https://firestore.googleapis.com/v1/" + document["name"] # note that this isn't the 'name' field
             response = requests.delete(url).json()
+            # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+            url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+document["fields"]["ID"]['stringValue']
+            response = requests.delete(url)
 
-    proxy_integration_response = {
-        "isBase64Encoded": False,
+    return {
         "statusCode": 200,
-        "headers": {},
-        "body": "success - something informative should go here",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({
+            "message": "Registry is reset."
+        })
     }
-    
-    return proxy_integration_response
