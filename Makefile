@@ -1,11 +1,11 @@
-.PHONY: check verify_format lint test
+i.PHONY: check verify_format lint test
 
 check: init-fake-submodules verify-format lint test
 
 verify-format:
 	cargo fmt --check
 
-lint:
+lint: verify-format
 	cargo clippy --tests -- -Dwarnings
 
 test:
@@ -18,3 +18,6 @@ init-fake-submodules:
 
 copy-hooks:
 	cp hooks/* .git/hooks
+  
+runmain: 
+	export GITHUB_TOKEN=$(TOKEN); export GITHUB_API_TOKEN=$(TOKEN); export LOG_FILE=log; export LOG_LEVEL=0; ./run build; ./run URL_FILE > tmp_file.txt
