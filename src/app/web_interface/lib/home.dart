@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+import 'api.dart' show APICaller;
 import 'data.dart' show PackageRegistry;
 import 'popup.dart' show showPackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
@@ -91,6 +92,26 @@ class _HomePageState extends State<HomePage> {
               compactBreakpointWidth: 900,
               primaryItems: [
                 CommandBarButton(
+                  onPressed: () async {
+                    // Call reset method
+                    bool result =
+                        await showPackageDialog(context, type: 'Reset');
+                    if (result) {
+                      _onRefresh();
+                    }
+                  },
+                  icon: Tooltip(
+                      message: 'Reset app to default state',
+                      child: Icon(
+                        FluentIcons.reset,
+                        color: Colors.red,
+                      )),
+                  label: Text(
+                    "Reset",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                CommandBarButton(
                   onPressed: _onRefresh,
                   icon: const Tooltip(
                       message: 'Refresh package list',
@@ -101,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CommandBarButton(
                     onPressed: () async {
-                      // Call add method (make one in PackageRegistry)
+                      // Call add method
                       bool result =
                           await showPackageDialog(context, type: 'Add');
                       if (result) {
@@ -118,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // Call delete method (make one in PackageRegistry)
+                          // Call delete method
                           bool result = await showPackageDialog(context,
                               type: 'Delete', packages: _pr.selectedData);
                           if (result) {
@@ -137,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // Call update method (make one in PackageRegistry)
+                          // Call update method
                           bool result = await showPackageDialog(context,
                               type: 'Update', packages: _pr.selectedData);
                           if (result) {
@@ -276,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                               editSelected: editSelected,
                             )
                           : const Text(
-                              'Could not load data. You may be signed out.'),
+                              'Could not load data. You may be signed out or there may be no packages.'),
                     ),
                   ],
                 ),

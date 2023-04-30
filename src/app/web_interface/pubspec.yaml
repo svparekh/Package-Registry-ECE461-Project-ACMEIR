@@ -48,6 +48,7 @@ dependencies:
   cloud_firestore: ^4.4.5
   # Use get() for api call
   http: ^0.13.5
+  file_picker: ^5.2.11
   
 
 dev_dependencies:
