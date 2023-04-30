@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 import 'api.dart' show APICaller;
@@ -16,7 +18,7 @@ showSuccessFailInfoBar(BuildContext context, bool success, String type) {
         ),
         style: InfoBarThemeData(
           decoration: (severity) {
-            return BoxDecoration(color: Colors.white);
+            return const BoxDecoration(color: Colors.white);
           },
         ),
         severity: InfoBarSeverity.success,
@@ -34,7 +36,7 @@ showSuccessFailInfoBar(BuildContext context, bool success, String type) {
         ),
         style: InfoBarThemeData(
           decoration: (severity) {
-            return BoxDecoration(color: Colors.white);
+            return const BoxDecoration(color: Colors.white);
           },
         ),
         severity: InfoBarSeverity.error,
@@ -58,9 +60,31 @@ Future<bool> showPackageDialog(BuildContext context,
       // Determine type
       Widget body;
       if (type == 'Add') {
-        body = TextBox(
-          placeholder: 'GitHub or npm URL',
-          controller: controller,
+        body = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FilledButton(
+              child: const Text('Pick package'),
+              onPressed: () async {
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles();
+
+                if (result != null) {
+                  File file = File(result.files.single.path!);
+                } else {
+                  // User canceled the picker
+                }
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('OR'),
+            ),
+            TextBox(
+              placeholder: 'GitHub or npm URL',
+              controller: controller,
+            ),
+          ],
         );
       } else if (type == 'Update') {
         body = packages == null
@@ -90,6 +114,11 @@ Future<bool> showPackageDialog(BuildContext context,
                   for (Map<String, dynamic> pack in packages) Text(pack['Name'])
                 ],
               );
+      } else if (type == 'Reset') {
+        body = Text(
+          'Are you sure you want to reset the app to default state?',
+          style: const TextStyle(fontSize: 16),
+        );
       } else {
         body = const Text('Invalid dialog type');
       }
@@ -119,16 +148,27 @@ Future<bool> showPackageDialog(BuildContext context,
 
                           if (type == 'Add') {
                             await APICaller.addPackage(url: controller.text)
-                                .then((value) => showSuccessFailInfoBar(
-                                    context, value, type));
+                                .then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
                           } else if (type == 'Update') {
                             await APICaller.updatePackages(packages: packages!)
-                                .then((value) => showSuccessFailInfoBar(
-                                    context, value, type));
+                                .then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
                           } else if (type == 'Delete') {
                             await APICaller.deletePackages(packages: packages!)
-                                .then((value) => showSuccessFailInfoBar(
-                                    context, value, type));
+                                .then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
+                          } else if (type == 'Reset') {
+                            await APICaller.factoryReset().then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
                           }
                         },
                   child: Text(type),
@@ -168,8 +208,9 @@ Future<String> showPropertiesDialog(BuildContext context,
                 name: 'Rating',
                 value: double.parse('${data['NetScore']}').toStringAsFixed(2)),
             propertyRow(name: 'Version', value: data['Version'].toString()),
-            propertyRow(name: 'Program', value: data['JSProgram'].toString()),
-            propertyRow(name: 'URL', value: 'NOT IMPLEMENTED'),
+            propertyRow(
+                name: 'Size',
+                value: data['Content'].toString().length.toString()),
           ],
         ),
       ),
@@ -211,22 +252,11 @@ Widget propertyRow({required String name, required String value}) {
           ),
         ),
         if (value.length > 20)
-          GestureDetector(
-            onTap: () {
-              if (name == 'URL') {
-                // TODO
-              }
-            },
+          SingleChildScrollView(
             child: Text(
               style: TextStyle(
-                  fontSize: 14,
-                  color: (name == 'URL') ? Colors.blue : Colors.black,
-                  decoration: (name == 'URL')
-                      ? TextDecoration.underline
-                      : TextDecoration.none),
-              overflow: TextOverflow.fade,
-              softWrap: true,
-              maxLines: 6,
+                fontSize: 14,
+              ),
               value,
             ),
           )
