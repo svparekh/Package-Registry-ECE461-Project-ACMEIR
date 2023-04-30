@@ -93,7 +93,7 @@ def lambda_handler(event, context):
     return { 
         "statusCode": 404,
         "headers": {
-            "Content-Type": "text/plain"
+            "Content-Type": "application/json"
         },
         "body": "Package does not exist."
     }
