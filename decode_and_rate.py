@@ -5,7 +5,6 @@ import io
 import shutil
 import json
 import subprocess
-import sys
 import requests
 import random
 import string
@@ -164,7 +163,7 @@ def decode(input_string, jsprogram):
     os.chdir(cwd + '/ECE461-Project-ACMEIR')
 
     # Open a text file for writing
-    with open('URL_FILE', 'w') as file:
+    with open('URL_FILE', 'w', encoding='utf-8') as file:
         # Write some text to the file
         file.write(url)
 
@@ -172,7 +171,7 @@ def decode(input_string, jsprogram):
     target = "runmain"
 
     # Run make command with a target
-    result = subprocess.run(["bash", "runmain.sh", "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"], capture_output=True, text=True)
+    result = subprocess.run(["bash", "runmain.sh", "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"], capture_output=True, text=True, check=False)
 
     metrics = {}
     file_contents = result.stdout
@@ -202,8 +201,8 @@ def decode(input_string, jsprogram):
                     path_2 = os.getcwd() + '/' + directory2
 
                     if url_given:
-                       content = grab_content(path_2)
-                       #content = compress_zip_and_base64(path_2)
+                        content = grab_content(path_2)
+                        #content = compress_zip_and_base64(path_2)
 
                     os.chdir(path_2)
                     
@@ -240,13 +239,13 @@ def decode(input_string, jsprogram):
     print(content)
 
     # taken from https://www.geeksforgeeks.org/python-generate-random-string-of-given-length/
-    id = str(''.join(random.choices(string.ascii_uppercase +
+    package_id = str(''.join(random.choices(string.ascii_uppercase +
                              string.digits, k=20)))
     # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
     date = datetime.datetime.utcnow().isoformat()
     date = date[0:date.index('.')]+'Z'
 
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId="+id
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages?documentId="+package_id
     request_body = {
         "fields" : {
             "Name" : {
@@ -283,7 +282,7 @@ def decode(input_string, jsprogram):
                 "stringValue": RESPONSIVE_MAINTAINER_SCORE,
             },
             "ID" : {
-                "stringValue": id,
+                "stringValue": package_id,
             },
             "History" : {
                 "arrayValue" : {
@@ -317,13 +316,13 @@ def decode(input_string, jsprogram):
             }
         }
     }
-    print(requests.post(url, data=json.dumps(request_body)).text)
+    print(requests.post(url, data=json.dumps(request_body), timeout=60).text)
 
     # https://cloud.google.com/storage/docs/uploading-objects#rest-upload-objects
-    url = "https://storage.googleapis.com/upload/storage/v1/b/acme-register-contents/o?uploadType=media&name="+id
+    url = "https://storage.googleapis.com/upload/storage/v1/b/acme-register-contents/o?uploadType=media&name="+package_id
 
     # https://www.w3schools.com/python/ref_requests_post.asp
-    response = requests.post(url, data=content)
+    response = requests.post(url, data=content, timeout=60)
 
     # Delete a file
     os.remove('URL_FILE')
