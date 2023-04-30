@@ -55,20 +55,20 @@ class DatabaseRow extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(children: [
           DatabaseCell(
-            width: MediaQuery.of(context).size.width / (cells.length - 1),
-            text: '${cells['id']}',
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['ID']}',
           ),
           DatabaseCell(
-            width: MediaQuery.of(context).size.width / (cells.length - 1),
-            text: '${cells['name']}',
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['Name']}',
           ),
           DatabaseCell(
-            width: MediaQuery.of(context).size.width / (cells.length - 1),
-            text: '${cells['version']}',
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['Version']}',
           ),
           DatabaseCell(
-            width: MediaQuery.of(context).size.width / (cells.length - 1),
-            text: double.parse('${cells['rating']}').toStringAsFixed(2),
+            width: MediaQuery.of(context).size.width / 5,
+            text: double.parse('${cells['NetScore']}').toStringAsFixed(2),
           ),
         ]),
       ),

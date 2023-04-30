@@ -37,7 +37,7 @@ class APICaller {
     bool isComplete = true;
     for (Map<String, dynamic> package in packages) {
       try {
-        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['id']));
+        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID']));
         var response = await delete(Uri.parse(test));
         if (response.statusCode == 200) {
           // Something
@@ -55,7 +55,7 @@ class APICaller {
     bool isComplete = true;
     for (Map<String, dynamic> package in packages) {
       try {
-        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['id']));
+        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID']));
         var response = await put(Uri.parse(test));
         if (response.statusCode == 200) {
           // Something

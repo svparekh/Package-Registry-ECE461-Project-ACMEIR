@@ -77,27 +77,27 @@ class PackageRegistry {
     if (curSortMethod == PresetValues.columns[0]) {
       _data!.sort(
         (a, b) => isSortAscending
-            ? int.parse('${a['id']}').compareTo(int.parse('${b['id']}'))
-            : int.parse('${b['id']}').compareTo(int.parse('${a['id']}')),
+            ? '${a['ID']}'.compareTo('${b['ID']}'.toLowerCase())
+            : '${b['ID']}'.compareTo('${a['ID']}'.toLowerCase()),
       );
       return true;
     } else if (curSortMethod == PresetValues.columns[1]) {
       _data!.sort(
         (a, b) => isSortAscending
-            ? '${a['name']}'
+            ? '${a['Name']}'
                 .toLowerCase()
-                .compareTo('${b['name']}'.toLowerCase())
-            : '${b['name']}'
+                .compareTo('${b['Name']}'.toLowerCase())
+            : '${b['Name']}'
                 .toLowerCase()
-                .compareTo('${a['name']}'.toLowerCase()),
+                .compareTo('${a['Name']}'.toLowerCase()),
       );
       return true;
     } else if (curSortMethod == PresetValues.columns[2]) {
       _data!.sort(
         (a, b) {
           // split 1.0.0 into ['1', '0', '0']
-          List<String> firstVersions = '${a['version']}'.split(".");
-          List<String> secondVersions = '${b['version']}'.split(".");
+          List<String> firstVersions = '${a['Version']}'.split(".");
+          List<String> secondVersions = '${b['Version']}'.split(".");
 
           // choose the greater of two lengths
           int numCompares = firstVersions.length > secondVersions.length
@@ -146,12 +146,12 @@ class PackageRegistry {
     } else if (curSortMethod == PresetValues.columns[3]) {
       _data!.sort(
         (a, b) => isSortAscending
-            ? '${a['rating']}'
+            ? '${a['NetScore']}'
                 .toLowerCase()
-                .compareTo('${b['rating']}'.toLowerCase())
-            : '${b['rating']}'
+                .compareTo('${b['NetScore']}'.toLowerCase())
+            : '${b['NetScore']}'
                 .toLowerCase()
-                .compareTo('${a['rating']}'.toLowerCase()),
+                .compareTo('${a['NetScore']}'.toLowerCase()),
       );
       return true;
     } else {
@@ -170,7 +170,7 @@ class PackageRegistry {
 
     // Search name category of all data to see if regardless of capitalization does the keyword show up anywhere in the package name
     for (Map<String, dynamic> row in _data!) {
-      if ('${row['name']}'.toLowerCase().contains(keyword)) {
+      if ('${row['Name']}'.toLowerCase().contains(keyword)) {
         filtered.add(row);
       }
     }

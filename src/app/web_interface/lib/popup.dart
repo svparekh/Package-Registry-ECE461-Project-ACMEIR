@@ -74,7 +74,7 @@ Future<bool> showPackageDialog(BuildContext context,
                   ),
                   for (Map<String, dynamic> pack in packages)
                     Text(
-                        pack['name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
+                        pack['Name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
                 ],
               );
       } else if (type == 'Delete') {
@@ -87,7 +87,7 @@ Future<bool> showPackageDialog(BuildContext context,
                     'If you delete ${packages.length == 1 ? 'this package' : 'these packages'}, you won\'t be able to recover ${packages.length == 1 ? 'it' : 'them'}. Do you want to delete ${packages.length == 1 ? 'it' : 'them'}?',
                     style: const TextStyle(fontSize: 16),
                   ),
-                  for (Map<String, dynamic> pack in packages) Text(pack['name'])
+                  for (Map<String, dynamic> pack in packages) Text(pack['Name'])
                 ],
               );
       } else {
@@ -162,14 +162,14 @@ Future<String> showPropertiesDialog(BuildContext context,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            propertyRow(name: 'Name', value: data['name'].toString()),
-            propertyRow(name: 'ID', value: data['id'].toString()),
+            propertyRow(name: 'Name', value: data['Name'].toString()),
+            propertyRow(name: 'ID', value: data['ID'].toString()),
             propertyRow(
                 name: 'Rating',
-                value: double.parse('${data['rating']}').toStringAsFixed(2)),
-            propertyRow(name: 'Version', value: data['version'].toString()),
-            propertyRow(name: 'Description', value: data['info'].toString()),
-            propertyRow(name: 'URL', value: data['url'].toString()),
+                value: double.parse('${data['NetScore']}').toStringAsFixed(2)),
+            propertyRow(name: 'Version', value: data['Version'].toString()),
+            propertyRow(name: 'Program', value: data['JSProgram'].toString()),
+            propertyRow(name: 'URL', value: 'NOT IMPLEMENTED'),
           ],
         ),
       ),
