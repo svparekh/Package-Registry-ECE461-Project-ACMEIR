@@ -46,14 +46,14 @@ jobs:
     steps:
       - name: checkout source code
         uses: actions/checkout@v1
-      # - name: deploy get-package
-      #   uses: appleboy/lambda-action@master
-      #   with:
-      #     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws_region: ${{ secrets.AWS_REGION }}
-      #     function_name: get-package
-      #     source: src/lambda_functions/get_package.py
+      - name: deploy get-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-package
+          source: src/lambda_functions/get_package.py
       - name: deploy get-packages
         uses: appleboy/lambda-action@master
         with:
@@ -118,3 +118,11 @@ jobs:
           aws_region: ${{ secrets.AWS_REGION }}
           function_name: reset
           source: src/lambda_functions/reset.py
+      - name: deploy rate-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: rate-package
+          source: src/lambda_functions/rate_package.py

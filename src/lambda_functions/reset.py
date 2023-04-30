@@ -26,9 +26,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain"
         },
-        "body": json.dumps({
-            "message": "Registry is reset."
-        })
+        "body": "Registry is reset."
     }

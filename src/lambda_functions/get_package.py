@@ -23,11 +23,9 @@ def lambda_handler(event, context):
             return { 
                 "statusCode": 404,
                 "headers": {
-                    "Content-Type": "application/json"
+                    "Content-Type": "test/plain"
                 },
-                "body": json.dumps({
-                    "error": "Package does not exist."
-                })
+                "body": "Package does not exist."
             }
 
         response_body = {
@@ -95,9 +93,7 @@ def lambda_handler(event, context):
     return { 
         "statusCode": 404,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain"
         },
-        "body": json.dumps({
-            "error": "Package does not exist."
-        })
+        "body": "Package does not exist."
     }

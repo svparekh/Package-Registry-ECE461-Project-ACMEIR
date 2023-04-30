@@ -45,19 +45,15 @@ def lambda_handler(event, context):
         return {
             "statusCode": 200,
             "headers": {
-                "Content-Type": "application/json"
+                "Content-Type": "text/plain"
             },
-            "body": json.dumps({
-                "error": "Package is deleted."
-            })
+            "body": "Package is deleted."
         }
     
     return {
         "statusCode": 404,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain"
         },
-        "body": json.dumps({
-            "error": "Package does not exist."
-        })
+        "body": "Package does not exist."
     }

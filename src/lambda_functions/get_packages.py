@@ -23,7 +23,8 @@ def lambda_handler(event, context):
 
   # get matching packages
   matching_packages = []
-  for query in event:
+  data = json.loads(event["body"])
+  for query in data:
     query_name = query['Name']
     query_version = query['Version']
     
@@ -77,6 +78,15 @@ def lambda_handler(event, context):
 
   # return in proper format
   matching_packages = [{"Version" : v, "Name" : n} for (n, v) in matching_packages]
+  
+  return {
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": json.dumps(matching_packages)
+  }
+    
   return json.dumps(matching_packages)
 
 def fitsTildeTarget(target, version):

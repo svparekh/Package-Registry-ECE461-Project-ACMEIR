@@ -3,20 +3,17 @@ import requests
 import datetime
 
 def lambda_handler(event, context):
-    #Chase: 
-    # Needs to be implemented. I'm holding off for now because this will be very similar to uploading a package, and I think there's a few changes we need
-    # to make first (returning right status code according to the spec, checking to see if id exists, handling duplicate names, etc.)
-    
-    # David:
-    # I'm going to do it somewhat just so I can check it off the plan lol
 
-    package_name = event["metadata"]["Name"]
-    package_version = event["metadata"]["Version"]
-    package_id = event["metadata"]["ID"]
+    # return event["body"]
+    data = json.loads(event["body"])
+
+    package_name = data["metadata"]["Name"]
+    package_version = data["metadata"]["Version"]
+    package_id = data["metadata"]["ID"]
     
-    package_content = event["data"].get("Content", "notFound")
-    package_url = event["data"].get("URL", "notFound")
-    package_jsprogram = event["data"].get("JSProgram", "notFound")
+    package_content = data["data"].get("Content", "notFound")
+    package_url = data["data"].get("URL", "notFound")
+    package_jsprogram = data["data"].get("JSProgram", "notFound")
     
     # NOTE: I'm assuming that we don't rate the package on update because there is no error code for it
     
@@ -26,16 +23,14 @@ def lambda_handler(event, context):
     document = requests.get(url).json()
     # print(document)
     
-    if "error" in document or document["fields"]['name']['stringValue'] != package_name or document["fields"]['version']['stringValue'] != package_version:
+    if "error" in document or document["fields"]['Name']['stringValue'] != package_name or document["fields"]['Version']['stringValue'] != package_version:
         
         return {
             "statusCode": 404,
             "headers": {
-                "Content-Type": "application/json"
+                "Content-Type": "test/plain"
             },
-            "body": json.dumps({
-                "error": "Package does not exist."
-            })
+            "body": "Package does not exist."
         }
         
     # for reference
@@ -93,9 +88,23 @@ def lambda_handler(event, context):
     # } 
 
     # TODO: do we need to check that union type is maintained here?
-    if package_content != 'notFound': document["fields"]['content']['stringValue'] = package_content
-    if package_url != 'notFound': document["fields"]['url']['stringValue'] = package_url
-    if package_jsprogram != 'notFound': document["fields"]['jsprogram']['stringValue'] = package_jsprogram
+    if package_url != 'notFound': 
+        document["fields"]['URL'] = {}
+        document["fields"]['URL']['stringValue'] = package_url
+    if package_jsprogram != 'notFound': 
+        document["fields"]['JSProgram'] = {}
+        document["fields"]['JSProgram']['stringValue'] = package_jsprogram
+    if package_content != 'notFound': 
+        # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+        url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+package_id
+        response = requests.delete(url)
+
+        # https://cloud.google.com/storage/docs/uploading-objects#rest-upload-objects
+        url = "https://storage.googleapis.com/upload/storage/v1/b/acme-register-contents/o?uploadType=media&name="+package_id
+        # https://www.w3schools.com/python/ref_requests_post.asp
+        response = requests.post(url, data=package_content)
+    
+    
 
     # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
     date = datetime.datetime.utcnow().isoformat()
@@ -139,9 +148,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "test/plain"
         },
-        "body": json.dumps({
-            "message": "Version is updated."
-        })
+        "body": "Version is updated."
     }

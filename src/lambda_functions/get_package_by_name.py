@@ -18,7 +18,7 @@ def lambda_handler(event, context):
         "where": {
             "fieldFilter": {
                 "field": {
-                    "fieldPath": "name"
+                    "fieldPath": "Name"
                 },
                 "op": "EQUAL",
                 "value": {
@@ -37,10 +37,10 @@ def lambda_handler(event, context):
       url = "https://firestore.googleapis.com/v1/" + document['document']['name']
       response = requests.get(url).json()
       
-      package_name = response['fields']['name']['stringValue']
-      package_version = response['fields']['version']['stringValue']
-      package_id = response['fields']['id']['stringValue']
-      history_entries = response['fields']['history']['arrayValue']['values']
+      package_name = response['fields']['Name']['stringValue']
+      package_version = response['fields']['Version']['stringValue']
+      package_id = response['fields']['ID']['stringValue']
+      history_entries = response['fields']['History']['arrayValue']['values']
       for entry in history_entries:
         history_entry = {
           "User": {
@@ -57,23 +57,20 @@ def lambda_handler(event, context):
         }
         history.append(history_entry)
 
-
-    proxy_integration_response = {
-      "isBase64Encoded": False,
-      "statusCode": 200,
-      "headers": {},
-      "body": history,
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps(history)
     }
-
-    return proxy_integration_response
   
-  proxy_integration_response = {
-    "isBase64Encoded": False,
+  return {
     "statusCode": 404,
-    "headers": {},
-    "body": "Failure - Package does not exist",
+    "headers": {
+        "Content-Type": "text/plain"
+    },
+    "body": "Package does not exist."
   }
-
-  return proxy_integration_response
 
 
