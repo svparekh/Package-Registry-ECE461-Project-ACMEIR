@@ -6,9 +6,9 @@ import random
 def lambda_handler(event, context):
 
     date = datetime.datetime.utcnow().isoformat() # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
-    id = date + '-' + str(int(random.random()*1000000))
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + id
-    response = requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}})).json()
+    log_id = date + '-' + str(int(random.random()*1000000))
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + log_id
+    requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}}), timeout=60).json()
 
     name = event['path'][16:] # /package/byName/_______
 
@@ -36,7 +36,7 @@ def lambda_handler(event, context):
         }
     }
 
-    lookup_response = requests.post(url, json.dumps(request_body)).json()
+    lookup_response = requests.post(url, json.dumps(request_body), timeout=60).json()
     # print(lookup_response) # NOTE: IF I DONT WORK, CHECK THIS PRINT STATEMENT!!!
     
     if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
@@ -44,10 +44,10 @@ def lambda_handler(event, context):
         for document in lookup_response:
             print(document)
             url = "https://firestore.googleapis.com/v1/" + document['document']['name']
-            delete_response = requests.delete(url).json()
+            requests.delete(url, timeout=60).json()
             # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
             url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+document['document']["fields"]["ID"]['stringValue']
-            response = requests.delete(url)
+            requests.delete(url, timeout=60)
 
         return {
             "statusCode": 200,

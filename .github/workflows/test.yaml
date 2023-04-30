@@ -26,7 +26,7 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files '*.py') --disable=C --disable=R --disable=W0613
   test-repo:
     runs-on: ubuntu-latest
     steps:
@@ -34,3 +34,6 @@ jobs:
       - run: make lint
       - run: make init-fake-submodules
       - run: make test
+
+# W0613 -> Unused argument 'context'
+# W0104 -> Statement seems to have no effect
