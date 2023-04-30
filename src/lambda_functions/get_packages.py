@@ -19,15 +19,15 @@ def lambda_handler(event, context):
     packages = response['documents']
     
     # establish name->version dictionary
-    name_to_version = {} # {name1: [version1, version2]}
+    name_to_version = {} # {name1: [(version1, id1), (version2, id2)]}
     for package in packages:
         package_name = package['fields']['Name']['stringValue']
         package_version = package['fields']['Version']['stringValue']
         package_id = package['fields']['ID']['stringValue']
         if package_name in name_to_version:
-            name_to_version[package_name].append[package_version]
+            name_to_version[package_name].append[(package_version, package_id)]
         else:
-            name_to_version[package_name] = [package_version]
+            name_to_version[package_name] = [(package_version, package_id)]
 
     # get matching packages
     matching_packages = []
@@ -40,36 +40,36 @@ def lambda_handler(event, context):
             if query_name == "*":
                 for name in name_to_version:
                     for version in name_to_version[name]:
-                        if version == query_version:
-                            matching_packages.append((name, version))
+                        if version[0] == query_version:
+                            matching_packages.append((name, version[0], version[1]))
             else:
                 for version in name_to_version[query_name]:
-                    if version == query_version:
-                        matching_packages.append((query_name, version))
+                    if version[0] == query_version:
+                        matching_packages.append((query_name, version[0], version[1]))
 
         elif query_version[0] == '^': # carat
             query_version = query_version[1:]
             if query_name == "*":
                 for name in name_to_version:
                     for version in name_to_version[name]:
-                        if fitsCaratTarget(query_version, version):
-                            matching_packages.append((name, version))
+                        if fitsCaratTarget(query_version, version[0]):
+                            matching_packages.append((name, version[0], version[1]))
             else:
                 for version in name_to_version[query_name]:
-                    if fitsCaratTarget(query_version, version):
-                        matching_packages.append((query_name, version))
+                    if fitsCaratTarget(query_version, version[0]):
+                        matching_packages.append((query_name, version[0], version[1]))
 
         elif query_version[0] == '~': # tilde
             query_version = query_version[1:]
             if query_name == "*":
                 for name in name_to_version:
                     for version in name_to_version[name]:
-                        if fitsTildeTarget(query_version, version):
-                            matching_packages.append((name, version))
+                        if fitsTildeTarget(query_version, version[0]):
+                            matching_packages.append((name, version, name_to_version[name][1]))
             else:
                 for version in name_to_version[query_name]:
-                    if fitsTildeTarget(query_version, version):
-                        matching_packages.append((query_name, version))
+                    if fitsTildeTarget(query_version, version[0]):
+                        matching_packages.append((query_name, version[0], version[1]))
 
         else: # bounded range
             query_version_low = query_version[0:5]
@@ -77,15 +77,15 @@ def lambda_handler(event, context):
             if query_name == "*":
                 for name in name_to_version:
                     for version in name_to_version[name]:
-                        if fitsBoundedRangeTarget(query_version_low, query_version_high, version):
-                            matching_packages.append((name, version))
+                        if fitsBoundedRangeTarget(query_version_low, query_version_high, version[0]):
+                            matching_packages.append((name, version[0], version[1]))
             else:
                 for version in name_to_version[query_name]:
-                    if fitsBoundedRangeTarget(query_version_low, query_version_high, version):
-                        matching_packages.append((query_name, version))
+                    if fitsBoundedRangeTarget(query_version_low, query_version_high, version[0]):
+                        matching_packages.append((query_name, version[0], version[1]))
 
     # return in proper format
-    matching_packages = [{"Version" : v, "Name" : n} for (n, v) in matching_packages]
+    matching_packages = [{"Version" : v, "Name" : n, "ID" : i} for (n, v, i) in matching_packages]
     
     return {
         "statusCode": 200,
