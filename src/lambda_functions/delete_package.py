@@ -8,7 +8,7 @@ def lambda_handler(event, context):
   date = datetime.datetime.utcnow().isoformat() # used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
   id = date + '-' + str(int(random.random()*1000000))
   url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + id
-  response = requests.post(url, json.dumps(event)).json()
+  response = requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}})).json()
 
   path_id = event['path'][9:]
   
