@@ -1,6 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-import 'api.dart' show APICaller;
 import 'data.dart' show PackageRegistry;
 import 'popup.dart' show showPackageDialog;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;

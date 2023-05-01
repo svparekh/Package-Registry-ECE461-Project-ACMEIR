@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:html' show AnchorElement, FileUploadInputElement, Url, window;
-import 'dart:io';
+import 'dart:html' show AnchorElement;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' show get, delete, post, put;
-import 'package:path_provider/path_provider.dart';
 
 class APICaller {
   // API Url

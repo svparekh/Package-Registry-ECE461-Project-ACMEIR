@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:html' show FileReader, FileUploadInputElement;
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 import 'api.dart' show APICaller;
