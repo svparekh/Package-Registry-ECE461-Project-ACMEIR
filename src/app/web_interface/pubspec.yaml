@@ -49,6 +49,7 @@ dependencies:
   # Use get() for api call
   http: ^0.13.5
   file_picker: ^5.2.11
+  path_provider: ^2.0.14
   
 
 dev_dependencies:

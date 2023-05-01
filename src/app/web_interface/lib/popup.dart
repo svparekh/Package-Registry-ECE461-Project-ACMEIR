@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:html' show FileReader, FileUploadInputElement;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -11,7 +13,7 @@ showSuccessFailInfoBar(BuildContext context, bool success, String type) {
       return InfoBar(
         title: Text('Successful $type!'),
         content: Text(
-            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : 'Deleting'} was successfuly completed.'),
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : type == 'Delete' ? 'Deleting' : type} was successfuly completed.'),
         action: IconButton(
           icon: const Icon(FluentIcons.clear),
           onPressed: close,
@@ -29,7 +31,7 @@ showSuccessFailInfoBar(BuildContext context, bool success, String type) {
       return InfoBar(
         title: Text('Failed to $type!'),
         content: Text(
-            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : 'Deleting'} could not be succesfuly completed. Please try again another time.'),
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : type == 'Delete' ? 'Deleting' : type} could not be succesfuly completed. Please try again another time.'),
         action: IconButton(
           icon: const Icon(FluentIcons.clear),
           onPressed: close,
@@ -47,42 +49,91 @@ showSuccessFailInfoBar(BuildContext context, bool success, String type) {
 
 Future<bool> showPackageDialog(BuildContext context,
     {required String type, List<Map<String, dynamic>>? packages}) async {
-  // Type can be of types: 'Add', 'Update', or 'Delete'
+  // Type can be of types: 'Add', 'Update', 'Delete', or 'Reset'
   // Returns false if canceled and true if main action button pressed
   final bool? result = await showDialog<bool>(
     context: context,
     builder: (context) {
       // Vars and stream setup
-      final TextEditingController controller = TextEditingController();
+      final TextEditingController controllerURL = TextEditingController();
+      final TextEditingController controllerCode = TextEditingController();
+      String pickedFileContent = '';
       StreamController<bool> isWorkingStream =
           StreamController<bool>.broadcast();
       isWorkingStream.add(false);
+      StreamController<String> pickedFileName =
+          StreamController<String>.broadcast();
+      pickedFileName.add('');
       // Determine type
       Widget body;
       if (type == 'Add') {
         body = Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FilledButton(
-              child: const Text('Pick package'),
-              onPressed: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Pick a zip package or enter URL'),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: FilledButton(
+                child: StreamBuilder<String>(
+                  stream: pickedFileName.stream,
+                  builder: (context, snapshot) {
+                    return Text((snapshot.hasData && snapshot.data!.isNotEmpty)
+                        ? snapshot.data!
+                        : 'Pick package');
+                  },
+                ),
+                onPressed: () async {
+                  FileUploadInputElement fileUploadInput =
+                      FileUploadInputElement();
+                  fileUploadInput.accept = '.zip';
+                  fileUploadInput.click();
 
-                if (result != null) {
-                  File file = File(result.files.single.path!);
-                } else {
-                  // User canceled the picker
-                }
-              },
+                  fileUploadInput.onChange.listen((e) {
+                    final files = fileUploadInput.files;
+                    if (files != null && files.length == 1) {
+                      final file = files[0];
+                      final reader = FileReader();
+                      reader.onLoadEnd.listen((e) {
+                        pickedFileName.add(file.name);
+                        pickedFileContent = reader.result.toString().substring(
+                            41); // remove data:application/x-zip-compressed;base64,
+                      });
+                      reader.readAsDataUrl(file);
+                    }
+                  });
+                  // FilePickerResult? result = await FilePicker.platform
+                  //     .pickFiles(
+                  //         allowedExtensions: ['zip'],
+                  //         type: FileType.custom,
+                  //         allowMultiple: false,
+                  //         lockParentWindow: true,
+                  //         dialogTitle: 'Pick a zip package to upload');
+
+                  // if (result != null) {
+                  //   pickedFileContent = base64Encode(
+                  //       File(result.files.single.path!).readAsBytesSync());
+                  // } else {
+                  //   // User canceled the picker
+                  // }
+                },
+              ),
+            ),
+            TextBox(
+              placeholder: 'Enter npm URL',
+              controller: controllerURL,
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('OR'),
+              child: Text('JS Program:'),
             ),
             TextBox(
-              placeholder: 'GitHub or npm URL',
-              controller: controller,
+              placeholder: 'Program',
+              minLines: 3,
+              maxLines: 6,
+              controller: controllerCode,
             ),
           ],
         );
@@ -143,22 +194,25 @@ Future<bool> showPackageDialog(BuildContext context,
                       : () async {
                           isWorkingStream.add(true);
 
-                          await Future.delayed(const Duration(seconds: 2))
-                              .then((value) => Navigator.pop(context, true));
-
                           if (type == 'Add') {
-                            await APICaller.addPackage(url: controller.text)
+                            await APICaller.addPackage(
+                                    data: controllerURL.text.isEmpty
+                                        ? pickedFileContent
+                                        : controllerURL.text,
+                                    code: controllerCode.text)
                                 .then((value) {
                               showSuccessFailInfoBar(context, value, type);
                               Navigator.pop(context, value);
                             });
-                          } else if (type == 'Update') {
-                            await APICaller.updatePackages(packages: packages!)
-                                .then((value) {
-                              showSuccessFailInfoBar(context, value, type);
-                              Navigator.pop(context, value);
-                            });
-                          } else if (type == 'Delete') {
+                          }
+                          // else if (type == 'Update') {
+                          //   await APICaller.updatePackages(packages: packages!)
+                          //       .then((value) {
+                          //     showSuccessFailInfoBar(context, value, type);
+                          //     Navigator.pop(context, value);
+                          //   });
+                          // }
+                          else if (type == 'Delete') {
                             await APICaller.deletePackages(packages: packages!)
                                 .then((value) {
                               showSuccessFailInfoBar(context, value, type);
@@ -194,34 +248,39 @@ Future<bool> showPackageDialog(BuildContext context,
 Future<String> showPropertiesDialog(BuildContext context,
     {required Map<String, dynamic> data}) async {
   final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      style: const ContentDialogThemeData(bodyStyle: TextStyle(fontSize: 20)),
-      title: const Text('Properties'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            propertyRow(name: 'Name', value: data['Name'].toString()),
-            propertyRow(name: 'ID', value: data['ID'].toString()),
-            propertyRow(
-                name: 'Rating',
-                value: double.parse('${data['NetScore']}').toStringAsFixed(2)),
-            propertyRow(name: 'Version', value: data['Version'].toString()),
-            propertyRow(
-                name: 'Size',
-                value: data['Content'].toString().length.toString()),
-          ],
-        ),
-      ),
-      actions: [
-        FilledButton(
-          child: const Text('Close'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
-  );
+      context: context,
+      builder: (context) => ContentDialog(
+            style: const ContentDialogThemeData(
+                bodyStyle: TextStyle(fontSize: 20)),
+            title: const Text('Properties'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  propertyRow(name: 'Name', value: data['Name'].toString()),
+                  propertyRow(name: 'ID', value: data['ID'].toString()),
+                  propertyRow(
+                      name: 'Rating',
+                      value: double.parse('${data['NetScore']}')
+                          .toStringAsFixed(2)),
+                  propertyRow(
+                      name: 'Version', value: data['Version'].toString()),
+                  propertyRow(
+                      name: 'Size',
+                      value:
+                          (((data['Content'].toString().length) / 4).ceil() * 3)
+                                  .toString() +
+                              ' bytes'),
+                ],
+              ),
+            ),
+            actions: [
+              FilledButton(
+                child: const Text('Close'),
+                onPressed: () => Navigator.pop(context, 'canceled'),
+              ),
+            ],
+          ));
   return result ?? 'canceled';
 }
 

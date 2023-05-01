@@ -1,8 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:web_interface/api.dart';
 
 import 'data.dart' show PackageRegistry;
 import 'main.dart' show PresetValues;
-import 'popup.dart' show showPropertiesDialog;
+import 'popup.dart' show showPropertiesDialog, showSuccessFailInfoBar;
 
 class DatabaseTable extends StatelessWidget {
   const DatabaseTable({
@@ -74,11 +75,34 @@ class DatabaseRow extends StatelessWidget {
       ),
       trailing: SizedBox(
         width: PresetValues.trailingSize,
-        child: FilledButton(
-          onPressed: () async {
-            await showPropertiesDialog(context, data: cells);
-          },
-          child: const Text("Properties"),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Tooltip(
+              message: "View this package's properties",
+              child: FilledButton(
+                onPressed: () async {
+                  await showPropertiesDialog(context, data: cells);
+                },
+                child: const Icon(FluentIcons.view),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Tooltip(
+              message: 'Download this package',
+              child: FilledButton(
+                onPressed: () async {
+                  await APICaller.downloadPackage(id: cells['ID'])
+                      .then((value) {
+                    showSuccessFailInfoBar(context, value, 'Download');
+                  });
+                },
+                child: const Icon(FluentIcons.download),
+              ),
+            )
+          ],
         ),
       ),
     );

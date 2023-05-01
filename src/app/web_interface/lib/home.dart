@@ -154,25 +154,25 @@ class _HomePageState extends State<HomePage> {
                     semanticsLabel: 'Delete selected',
                   ),
                 ),
-                CommandBarButton(
-                  onPressed: _pr.selectedData.isEmpty
-                      ? null
-                      : () async {
-                          // Call update method
-                          bool result = await showPackageDialog(context,
-                              type: 'Update', packages: _pr.selectedData);
-                          if (result) {
-                            _onRefresh();
-                          }
-                        },
-                  icon: Tooltip(
-                      message: 'Update the selected packages',
-                      child: const Icon(FluentIcons.download)),
-                  label: Text(
-                    'Update${_pr.selectedData.length <= 1 ? '' : ' All'}',
-                    semanticsLabel: 'Update selected',
-                  ),
-                ),
+                // CommandBarButton(
+                //   onPressed: _pr.selectedData.isEmpty
+                //       ? null
+                //       : () async {
+                //           // Call update method
+                //           bool result = await showPackageDialog(context,
+                //               type: 'Update', packages: _pr.selectedData);
+                //           if (result) {
+                //             _onRefresh();
+                //           }
+                //         },
+                //   icon: Tooltip(
+                //       message: 'Update the selected packages',
+                //       child: const Icon(FluentIcons.download)),
+                //   label: Text(
+                //     'Update${_pr.selectedData.length <= 1 ? '' : ' All'}',
+                //     semanticsLabel: 'Update selected',
+                //   ),
+                // ),
                 const CommandBarSeparator(),
                 CommandBarButton(
                   onPressed: () {},
@@ -277,8 +277,7 @@ class _HomePageState extends State<HomePage> {
                               i < PresetValues.columns.length - 1;
                               i++)
                             DatabaseCell(
-                              width: MediaQuery.of(context).size.width /
-                                  (PresetValues.columns.length),
+                              width: MediaQuery.of(context).size.width / 5,
                               text: PresetValues.columns[i],
                             )
                         ]),

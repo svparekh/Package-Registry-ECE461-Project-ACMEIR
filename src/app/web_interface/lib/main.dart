@@ -11,7 +11,7 @@ import 'login.dart' show LoginPage;
 // Constants
 
 class PresetValues {
-  static const double trailingSize = 100.0;
+  static const double trailingSize = 80.0;
   static const String siteName = 'ACME Package Registry';
   static const Color offwhite = Color.fromARGB(255, 241, 241, 241);
   static const Color offwhiteDark = Color.fromARGB(255, 222, 222, 222);
@@ -20,7 +20,7 @@ class PresetValues {
     "Package Name",
     "Version",
     "Rating",
-    "Properties"
+    "Actions"
   ];
 }
 
@@ -119,12 +119,12 @@ class _NavPageState extends State<NavPage> {
                   future: PackageRegistry().importData(),
                 )),
             // Login navbar item
-            PaneItem(
-                icon: const Icon(FluentIcons.contact),
-                title: const Text(
-                  "Login",
-                ),
-                body: const LoginPage()),
+            // PaneItem(
+            //     icon: const Icon(FluentIcons.contact),
+            //     title: const Text(
+            //       "Login",
+            //     ),
+            //     body: const LoginPage()),
           ],
           onChanged: (value) {
             setState(() {
