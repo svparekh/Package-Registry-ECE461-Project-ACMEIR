@@ -1,6 +1,9 @@
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/rendering.dart';
 
 import 'data.dart' show PackageRegistry;
 import 'firebase_options.dart' show DefaultFirebaseOptions;
@@ -26,6 +29,11 @@ class PresetValues {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Accessibility
+  RendererBinding.instance.setSemanticsEnabled(true);
+  document.querySelector("meta[name=viewport]")!.setAttribute('content',
+      "width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes");
 
   // setup firebase
   await Firebase.initializeApp(
@@ -66,6 +74,7 @@ class _WebAppState extends State<WebApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
+      locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       title: PresetValues.siteName,
       theme: FluentThemeData(brightness: Brightness.light),
@@ -99,9 +108,12 @@ class _NavPageState extends State<NavPage> {
             animation: animation, child: child);
       },
       key: _viewKey,
-      appBar: const NavigationAppBar(
+      appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: Text(PresetValues.siteName, style: TextStyle(fontSize: 18)),
+        title: Text(PresetValues.siteName,
+            style: TextStyle(
+              fontSize: 18,
+            )),
       ),
       pane: NavigationPane(
           selected: _pageIndex,
