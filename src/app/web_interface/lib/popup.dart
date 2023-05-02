@@ -60,7 +60,7 @@ Future<bool> showPackageDialog(BuildContext context,
       isWorkingStream.add(false);
       StreamController<String> pickedFileName =
           StreamController<String>.broadcast();
-      pickedFileName.add('');
+      final reader = FileReader();
       // Determine type
       Widget body;
       if (type == 'Add') {
@@ -77,9 +77,8 @@ Future<bool> showPackageDialog(BuildContext context,
                 child: StreamBuilder<String>(
                   stream: pickedFileName.stream,
                   builder: (context, snapshot) {
-                    return Text((snapshot.hasData && snapshot.data!.isNotEmpty)
-                        ? snapshot.data!
-                        : 'Pick package');
+                    return Text(
+                        (snapshot.hasData) ? snapshot.data! : 'Pick package');
                   },
                 ),
                 onPressed: () async {
@@ -92,13 +91,15 @@ Future<bool> showPackageDialog(BuildContext context,
                     final files = fileUploadInput.files;
                     if (files != null && files.length == 1) {
                       final file = files[0];
-                      final reader = FileReader();
 
-                      reader.onLoadEnd.listen((e) {
-                        print(reader.result);
-                        pickedFileName.add(file.name);
+                      reader.onLoadStart.listen((event) {
+                        pickedFileName.add('Loading package...');
+                      });
+
+                      reader.onLoad.listen((e) {
                         pickedFileContent = reader.result.toString().substring(
-                            41); // remove data:application/x-zip-compressed;base64,
+                            41); // remove 'data:application/x-zip-compressed;base64,'
+                        pickedFileName.add(file.name);
                       });
                       reader.readAsDataUrl(file);
                     }
@@ -233,7 +234,10 @@ Future<bool> showPackageDialog(BuildContext context,
                 return Button(
                   onPressed: (snapshot.hasData && snapshot.data == true)
                       ? null
-                      : () => Navigator.pop(context, false),
+                      : () {
+                          reader.abort();
+                          Navigator.pop(context, false);
+                        },
                   child: const Text('Cancel'),
                 );
               }),

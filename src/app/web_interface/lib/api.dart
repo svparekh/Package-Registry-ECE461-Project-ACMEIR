@@ -28,7 +28,6 @@ class APICaller {
   static Future<bool> addPackage(
       {required String data, required String code}) async {
     try {
-      print('Upload Content:\n$data');
       var requestBody = {"Content": data, "JSProgram": code};
 
       Uri apiUrl = Uri.parse(addEndpoint);

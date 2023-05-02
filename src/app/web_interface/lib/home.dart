@@ -146,9 +146,9 @@ class _HomePageState extends State<HomePage> {
                             _onRefresh();
                           }
                         },
-                  icon: Tooltip(
+                  icon: const Tooltip(
                       message: 'Delete the selected packages',
-                      child: const Icon(FluentIcons.delete)),
+                      child: Icon(FluentIcons.delete)),
                   label: Text(
                     'Delete${_pr.selectedData.isEmpty ? '' : ' (${_pr.selectedData.length})'}',
                     semanticsLabel: 'Delete selected',
@@ -290,13 +290,31 @@ class _HomePageState extends State<HomePage> {
                     ),
                     // List of data
                     Expanded(
-                      child: (widget.importDataSuccess || refreshSuccess)
+                      child: (widget.importDataSuccess ||
+                              refreshSuccess ||
+                              _pr.filteredData.isNotEmpty)
                           ? DatabaseTable(
                               data: _pr.filteredData,
                               editSelected: editSelected,
                             )
-                          : const Text(
-                              'Could not load data. You may be signed out or there may be no packages.'),
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: Column(
+                                children: const [
+                                  Tooltip(
+                                    message:
+                                        'Warning: Data could not be loaded from cloud database. You may be signed out or there may be no packages within the database to display.',
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'No data available for viewing. You may be signed out or there may be no packages.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                     ),
                   ],
                 ),
