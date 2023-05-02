@@ -1,7 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+import 'api.dart';
 import 'data.dart' show PackageRegistry;
-import 'popup.dart' show showPackageDialog;
+import 'popup.dart' show showPackageDialog, showSuccessFailInfoBar;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
 import 'main.dart' show PresetValues;
 import 'wavy_bg.dart' show WavingBackground;

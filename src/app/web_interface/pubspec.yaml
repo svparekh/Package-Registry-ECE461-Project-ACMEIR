@@ -34,7 +34,6 @@ dependencies:
 
   # Windows 11 Style UI
   fluent_ui: ^4.4.1
-
   # Connection to Firebase (Firebase Firestore is the same as GCP Firestore)
   firebase_core: ^2.8.0
   # Auth from Firebase

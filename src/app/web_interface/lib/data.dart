@@ -77,8 +77,8 @@ class PackageRegistry {
     if (curSortMethod == PresetValues.columns[0]) {
       _data!.sort(
         (a, b) => isSortAscending
-            ? '${a['ID']}'.compareTo('${b['ID']}'.toLowerCase())
-            : '${b['ID']}'.compareTo('${a['ID']}'.toLowerCase()),
+            ? '${a['ID']}'.toLowerCase().compareTo('${b['ID']}'.toLowerCase())
+            : '${b['ID']}'.toLowerCase().compareTo('${a['ID']}'.toLowerCase()),
       );
       return true;
     } else if (curSortMethod == PresetValues.columns[1]) {

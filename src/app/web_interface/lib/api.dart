@@ -1,5 +1,7 @@
+// ignore_for_file: avoid_web_libraries_in_flutter
+
 import 'dart:convert';
-import 'dart:html' show AnchorElement;
+import 'dart:html' show AnchorElement, document;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' show get, delete, post, put;
@@ -101,23 +103,24 @@ class APICaller {
     return false;
   }
 
-  static Future<bool> downloadPackage({required String id}) async {
+  static Future<bool> downloadPackage(
+      {required Map<String, dynamic> package}) async {
     try {
       var snapshot = await FirebaseFirestore.instance
           .collection('/packages')
-          .doc(id)
+          .doc(package['ID'])
           .get();
       if (snapshot.data() != null) {
-        // var directory = await getDownloadsDirectory();
-        // File downloadFile = File(directory!.resolveSymbolicLinksSync());
-        // downloadFile
-        //     .writeAsBytesSync(base64Decode((snapshot.data()!['Content'])));
-
         final urlString =
-            "data:application/zip;base64,${snapshot.data()!['Content']}";
-        AnchorElement anchorElement = AnchorElement(href: urlString);
-        anchorElement.download = urlString;
+            "data:application/x-zip-compressed;base64,${snapshot.data()!['Content']}";
+        AnchorElement anchorElement = AnchorElement(href: urlString)
+          ..target = 'blank';
+        anchorElement.download =
+            '${package['Name']}_v${package['Version']}.zip';
+        document.body!.append(anchorElement);
         anchorElement.click();
+        anchorElement.remove();
+        return true;
       }
 
       // Uri apiUrl = Uri.parse(packageByIdEndpoint(id));

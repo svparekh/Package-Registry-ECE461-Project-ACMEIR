@@ -94,8 +94,7 @@ class DatabaseRow extends StatelessWidget {
               message: 'Download this package',
               child: FilledButton(
                 onPressed: () async {
-                  await APICaller.downloadPackage(id: cells['ID'])
-                      .then((value) {
+                  await APICaller.downloadPackage(package: cells).then((value) {
                     showSuccessFailInfoBar(context, value, 'Download');
                   });
                 },

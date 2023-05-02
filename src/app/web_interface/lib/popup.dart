@@ -93,7 +93,9 @@ Future<bool> showPackageDialog(BuildContext context,
                     if (files != null && files.length == 1) {
                       final file = files[0];
                       final reader = FileReader();
+
                       reader.onLoadEnd.listen((e) {
+                        print(reader.result);
                         pickedFileName.add(file.name);
                         pickedFileContent = reader.result.toString().substring(
                             41); // remove data:application/x-zip-compressed;base64,
