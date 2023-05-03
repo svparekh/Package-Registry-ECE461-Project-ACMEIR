@@ -48,11 +48,12 @@ class APICaller {
     bool isComplete = true;
     for (Map<String, dynamic> package in packages) {
       try {
-        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID']));
+        Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID'].toString()));
         var response = await delete(
           apiUrl,
           headers: headers,
         );
+        print(response.statusCode);
         if (response.statusCode == 200) {
           // Something
         }
@@ -92,6 +93,7 @@ class APICaller {
         apiUrl,
         headers: headers,
       );
+      print(response.statusCode);
       if (response.statusCode == 200) {
         // Something
         return true;
@@ -112,8 +114,7 @@ class APICaller {
       if (snapshot.data() != null) {
         final urlString =
             "data:application/x-zip-compressed;base64,${snapshot.data()!['Content']}";
-        AnchorElement anchorElement = AnchorElement(href: urlString)
-          ..target = 'blank';
+        AnchorElement anchorElement = AnchorElement(href: urlString);
         anchorElement.download =
             '${package['Name']}_v${package['Version']}.zip';
         document.body!.append(anchorElement);
@@ -121,19 +122,6 @@ class APICaller {
         anchorElement.remove();
         return true;
       }
-
-      // Uri apiUrl = Uri.parse(packageByIdEndpoint(id));
-      // var response = await get(
-      //   apiUrl,
-      //   headers: headers,
-      // );
-      // if (response.statusCode == 200) {
-      //   print(response.body);
-      //   var directory = await getDownloadsDirectory();
-      //   File downloadFile = File(directory!.resolveSymbolicLinksSync());
-      //   downloadFile.writeAsBytesSync(base64Decode((response.body)));
-      //   return true;
-      // }
     } catch (e) {
       print(e);
     }

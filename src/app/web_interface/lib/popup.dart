@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:html' show FileReader, FileUploadInputElement;
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -97,11 +98,17 @@ Future<bool> showPackageDialog(BuildContext context,
                       });
 
                       reader.onLoad.listen((e) {
-                        pickedFileContent = reader.result.toString().substring(
-                            41); // remove 'data:application/x-zip-compressed;base64,'
+                        final bytes = reader.result as List<int>;
+                        pickedFileContent = base64Encode(bytes);
+                        // pickedFileContent = reader.result.toString().substring(
+                        //     41); // remove 'data:application/x-zip-compressed;base64,'
                         pickedFileName.add(file.name);
                       });
-                      reader.readAsDataUrl(file);
+                      reader.readAsArrayBuffer(file);
+
+                      // Convert the file contents to a base64 encoded string
+
+                      // reader.readAsDataUrl(file);
                     }
                   });
                   // FilePickerResult? result = await FilePicker.platform
