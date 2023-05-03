@@ -18,9 +18,9 @@ def lambda_handler(event, context):
     package_url = data.get("URL", "notFound")
     package_jsprogram = data.get("JSProgram", "notFound")
     
-    if package_content == "null":   package_content = "notFound"
-    if package_url == "null":       package_url = "notFound"
-    if package_jsprogram == "null": package_jsprogram = "notFound"
+    if package_content == None:   package_content = "notFound"
+    if package_url == None:       package_url = "notFound"
+    if package_jsprogram == None: package_jsprogram = "notFound"
     
     # both are set or both are not set - return error
     if (package_url != "notFound" and package_content != "notFound") or (package_url == "notFound" and package_content == "notFound"):
@@ -48,7 +48,17 @@ def lambda_handler(event, context):
     headers = {"Content-Type": "application/json"}
     
     response = requests.post(url, data=json.dumps(request_body), headers=headers, timeout=60).json()
-    
+
+    if "Package exists already." in response.keys():
+        return {
+            "statusCode": 409,
+            "headers": {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": "Package exists already."
+        }
+
     package_id = response['fields']['ID']['stringValue']
     name = response['fields']['Name']['stringValue']
     jsprogram = response['fields']['JSProgram']['stringValue']

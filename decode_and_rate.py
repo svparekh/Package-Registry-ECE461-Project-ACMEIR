@@ -246,7 +246,42 @@ def decode(input_string, jsprogram):
     CORRECTNESS_SCORE = str(metrics['CORRECTNESS_SCORE'])
     RESPONSIVE_MAINTAINER_SCORE = str(metrics['RESPONSIVE_MAINTAINER_SCORE'])
 
-    print(content)
+    # see delete_package_by_name on links about query
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents:runQuery"
+    request_body = {
+        "structuredQuery": {
+            "from": [{
+                "collectionId": "packages",
+                "allDescendants": True
+            }],
+            "where": {
+                "fieldFilter": {
+                    "field": {
+                        "fieldPath": "Name"
+                    },
+                    "op": "EQUAL",
+                    "value": {
+                        "stringValue": name
+                    }
+                }
+            }
+        }
+    }
+
+    lookup_response = requests.post(url, json.dumps(request_body), timeout=60).json()
+
+    if len(lookup_response) > 0 and 'document' in lookup_response[0].keys():
+        for document in lookup_response:
+            url = "https://firestore.googleapis.com/v1/" + document['document']['name']
+            response = requests.get(url, timeout=60).json()
+            
+            lookup_version = response['fields']['Version']['stringValue']
+
+            if version == lookup_version:
+                response = {"Package exists already.": ""}
+
+                print(json.dumps(response))
+                return [-999]
 
     # taken from https://www.geeksforgeeks.org/python-generate-random-string-of-given-length/
     package_id = str(''.join(random.choices(string.ascii_uppercase +
@@ -326,7 +361,13 @@ def decode(input_string, jsprogram):
             }
         }
     }
-    print(requests.post(url, data=json.dumps(request_body), timeout=60).text)
+    
+    response = requests.post(url, data=json.dumps(request_body), timeout=60).json()
+
+    response['fields']['Content'] = {}
+    response['fields']['Content']['stringValue'] = content
+
+    print(json.dumps(response))
 
     # https://cloud.google.com/storage/docs/uploading-objects#rest-upload-objects
     url = "https://storage.googleapis.com/upload/storage/v1/b/acme-register-contents/o?uploadType=media&name="+package_id
