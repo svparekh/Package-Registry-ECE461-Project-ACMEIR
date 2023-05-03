@@ -36,7 +36,8 @@ def lambda_handler(event, context):
         return {
             "statusCode": 404,
             "headers": {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
             },
             "body": "Package does not exist."
         }
@@ -156,7 +157,8 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
         },
         "body": "Version is updated."
     }

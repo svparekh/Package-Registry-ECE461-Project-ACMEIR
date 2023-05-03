@@ -27,20 +27,21 @@ def lambda_handler(event, context):
     net_score = response['fields']['NetScore']['stringValue']
     
     scores = {
-      "BusFactor": bus_factor_score,
-      "Correctness": correctness_score,
-      "RampUp": ramp_up_score,
-      "ResponsiveMaintainer": responsive_maintainer_score,
-      "LicenseScore": license_score,
-      "GoodPinningPractice": fraction_dependencies_score,
-      "PullRequest": fraction_reviewed_score,
-      "NetScore": net_score
+        "BusFactor": bus_factor_score,
+        "Correctness": correctness_score,
+        "RampUp": ramp_up_score,
+        "ResponsiveMaintainer": responsive_maintainer_score,
+        "LicenseScore": license_score,
+        "GoodPinningPractice": fraction_dependencies_score,
+        "PullRequest": fraction_reviewed_score,
+        "NetScore": net_score
     }
 
     return {
-      "statusCode": 200,
-      "headers": {
-          "Content-Type": "application/json"
-      },
-      "body": json.dumps(scores)
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
+        },
+        "body": json.dumps(scores)
     }

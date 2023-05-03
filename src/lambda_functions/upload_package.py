@@ -25,11 +25,12 @@ def lambda_handler(event, context):
     # both are set or both are not set - return error
     if (package_url != "notFound" and package_content != "notFound") or (package_url == "notFound" and package_content == "notFound"):
         return {
-          "statusCode": 400,
-          "headers": {
-              "Content-Type": "application/json"
-          },
-          "body": "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",          
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": "There is missing field(s) in the PackageData/AuthenticationToken or it is formed improperly (e.g. Content and URL are both set), or the AuthenticationToken is invalid."
         }
     
     # package url is set
