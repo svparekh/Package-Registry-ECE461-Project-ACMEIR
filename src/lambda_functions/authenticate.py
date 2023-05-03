@@ -11,9 +11,9 @@ def lambda_handler(event, context):
     requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}}), timeout=60).json()
     
     return { 
-        "statusCode": 200,
+        "statusCode": 501,
         "headers": {
             "Content-Type": "application/json"
         },
-        "body": "hello"
+        "body": "No token"
     }

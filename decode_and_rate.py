@@ -168,7 +168,7 @@ def decode(input_string, jsprogram):
     os.chdir(cwd + '/ECE461-Project-ACMEIR')
 
     # Open a URL_FILE text file for part 1 code
-    with open('URL_FILE', 'w') as file:
+    with open('URL_FILE', 'w', encoding="utf-8") as file:
         file.write(url)
 
     # Target to run in Makefile
@@ -210,7 +210,7 @@ def decode(input_string, jsprogram):
 
                     if url_given:
                         # Grab base64 encoded content
-                       content = grab_content(path_2)
+                        content = grab_content(path_2)
 
                     os.chdir(path_2)
                     

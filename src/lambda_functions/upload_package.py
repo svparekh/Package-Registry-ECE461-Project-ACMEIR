@@ -18,6 +18,10 @@ def lambda_handler(event, context):
     package_url = data.get("URL", "notFound")
     package_jsprogram = data.get("JSProgram", "notFound")
     
+    if package_content == "null":   package_content = "notFound"
+    if package_url == "null":       package_url = "notFound"
+    if package_jsprogram == "null": package_jsprogram = "notFound"
+    
     # both are set or both are not set - return error
     if (package_url != "notFound" and package_content != "notFound") or (package_url == "notFound" and package_content == "notFound"):
         return {
@@ -43,7 +47,7 @@ def lambda_handler(event, context):
     
     headers = {"Content-Type": "application/json"}
     
-    response = requests.post(url, data=json.dumps(request_body), headers=headers).json()
+    response = requests.post(url, data=json.dumps(request_body), headers=headers, timeout=60).json()
     
     package_id = response['fields']['ID']['stringValue']
     name = response['fields']['Name']['stringValue']
@@ -66,7 +70,8 @@ def lambda_handler(event, context):
     return {
       "statusCode": 201,
       "headers": {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': '*',
       },
       "body": json.dumps(response)
     }
