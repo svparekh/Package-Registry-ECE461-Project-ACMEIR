@@ -1,5 +1,4 @@
 import sys
-import time
 from decode_and_rate import decode
 
 base64_string = sys.argv[1]
