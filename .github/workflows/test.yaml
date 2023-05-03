@@ -26,7 +26,7 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py') --disable=C --disable=R --disable=W0613 --disable=W0612 --disable=W0104
+        pylint $(git ls-files '*.py') --disable=C --disable=R --disable=W0613 --disable=W0612 --disable=W0104 --disable=E0401
   test-repo:
     runs-on: ubuntu-latest
     steps:
@@ -38,3 +38,4 @@ jobs:
 # W0613 -> Unused argument 'context'
 # W0612 -> Unused variable
 # W0104 -> Statement seems to have no effect
+# E0401 -> Unable to import 'requests'
