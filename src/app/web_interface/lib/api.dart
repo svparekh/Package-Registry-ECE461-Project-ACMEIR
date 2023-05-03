@@ -104,16 +104,38 @@ class APICaller {
     return false;
   }
 
+  static Future<int> packageSize(
+      {required Map<String, dynamic> package}) async {
+    try {
+      Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID']));
+      var response = await get(
+        apiUrl,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return (((data['data']['Content'].toString().length) / 4).ceil() * 3);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return 0;
+  }
+
   static Future<bool> downloadPackage(
       {required Map<String, dynamic> package}) async {
     try {
-      var snapshot = await FirebaseFirestore.instance
-          .collection('/packages')
-          .doc(package['ID'])
-          .get();
-      if (snapshot.data() != null) {
+      Uri apiUrl = Uri.parse(packageByIdEndpoint(package['ID']));
+      var response = await get(
+        apiUrl,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
         final urlString =
-            "data:application/x-zip-compressed;base64,${snapshot.data()!['Content']}";
+            "data:application/x-zip-compressed;base64,${data['data']['Content']}";
         AnchorElement anchorElement = AnchorElement(href: urlString);
         anchorElement.download =
             '${package['Name']}_v${package['Version']}.zip';

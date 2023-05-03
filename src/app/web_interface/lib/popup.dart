@@ -257,6 +257,7 @@ Future<bool> showPackageDialog(BuildContext context,
 
 Future<String> showPropertiesDialog(BuildContext context,
     {required Map<String, dynamic> data}) async {
+  final int size = await APICaller.packageSize(package: data);
   final result = await showDialog<String>(
       context: context,
       builder: (context) => ContentDialog(
@@ -275,12 +276,7 @@ Future<String> showPropertiesDialog(BuildContext context,
                           .toStringAsFixed(2)),
                   propertyRow(
                       name: 'Version', value: data['Version'].toString()),
-                  propertyRow(
-                      name: 'Size',
-                      value:
-                          (((data['Content'].toString().length) / 4).ceil() * 3)
-                                  .toString() +
-                              ' bytes'),
+                  propertyRow(name: 'Size', value: '$size bytes'),
                 ],
               ),
             ),
