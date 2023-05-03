@@ -12,5 +12,8 @@ Cargo.lock
 # folder used to store artefacts used for coverage reports
 coverage
 
+# pycache
+__pycache__
+
 # folder to hold cloned repos
 acme

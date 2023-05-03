@@ -1,4 +1,4 @@
-.PHONY: check verify_format lint test
+i.PHONY: check verify_format lint test
 
 check: init-fake-submodules verify-format lint test
 
@@ -21,3 +21,4 @@ copy-hooks:
   
 runmain: 
 	export GITHUB_TOKEN=$(TOKEN); export GITHUB_API_TOKEN=$(TOKEN); export LOG_FILE=log; export LOG_LEVEL=2; ./run build; ./run URL_FILE
+
