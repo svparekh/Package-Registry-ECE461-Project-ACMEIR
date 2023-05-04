@@ -1,8 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:web_interface/api.dart';
 
 import 'data.dart' show PackageRegistry;
-import 'main.dart' show trailingSize;
-import 'popup.dart' show showPropertiesDialog;
+import 'main.dart' show PresetValues;
+import 'popup.dart' show showPropertiesDialog, showSuccessFailInfoBar;
 
 class DatabaseTable extends StatelessWidget {
   const DatabaseTable({
@@ -51,31 +52,56 @@ class DatabaseRow extends StatelessWidget {
         editSelected(value, cells);
       },
       selected: PackageRegistry().selectedData.contains(cells),
-      title: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['id']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['name']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: '${cells['version']}',
-        ),
-        DatabaseCell(
-          width: MediaQuery.of(context).size.width / (cells.length),
-          text: double.parse('${cells['rating']}').toStringAsFixed(2),
-        ),
-      ]),
+      title: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['ID']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['Name']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / 5,
+            text: '${cells['Version']}',
+          ),
+          DatabaseCell(
+            width: MediaQuery.of(context).size.width / 5,
+            text: double.parse('${cells['NetScore']}').toStringAsFixed(2),
+          ),
+        ]),
+      ),
       trailing: SizedBox(
-        width: trailingSize,
-        child: FilledButton(
-          onPressed: () async {
-            await showPropertiesDialog(context, data: cells);
-          },
-          child: const Text("Properties"),
+        width: PresetValues.trailingSize,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Tooltip(
+              message: "View this package's properties",
+              child: FilledButton(
+                onPressed: () async {
+                  await showPropertiesDialog(context, data: cells);
+                },
+                child: const Icon(FluentIcons.view),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Tooltip(
+              message: 'Download this package',
+              child: FilledButton(
+                onPressed: () async {
+                  await APICaller.downloadPackage(package: cells).then((value) {
+                    showSuccessFailInfoBar(context, value, 'Download');
+                  });
+                },
+                child: const Icon(FluentIcons.download),
+              ),
+            )
+          ],
         ),
       ),
     );

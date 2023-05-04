@@ -1,133 +1,292 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:html' show FileReader, FileUploadInputElement;
 import 'package:fluent_ui/fluent_ui.dart';
 
-Future<String> showDeletePackageDialog(
-    BuildContext context, List<Map<String, dynamic>> packages) async {
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      title: Text('Delete ${packages.length == 1 ? 'package' : 'packages'}?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'If you delete ${packages.length == 1 ? 'this package' : 'these packages'}, you won\'t be able to recover ${packages.length == 1 ? 'it' : 'them'}. Do you want to delete ${packages.length == 1 ? 'it' : 'them'}?',
-            style: const TextStyle(fontSize: 16),
-          ),
-          for (Map<String, dynamic> pack in packages) Text(pack['name'])
-        ],
-      ),
-      actions: [
-        Button(
-          child: const Text('Delete'),
-          onPressed: () {
-            Navigator.pop(context, 'deleted');
-            // Delete packages here
+import 'api.dart' show APICaller;
+
+showSuccessFailInfoBar(BuildContext context, bool success, String type) {
+  if (success) {
+    displayInfoBar(context, builder: (context, close) {
+      return InfoBar(
+        title: Text('Successful $type!'),
+        content: Text(
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : type == 'Delete' ? 'Deleting' : type} was successfuly completed.'),
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
+        ),
+        style: InfoBarThemeData(
+          decoration: (severity) {
+            return const BoxDecoration(color: Colors.white);
           },
         ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
+        severity: InfoBarSeverity.success,
+      );
+    });
+  } else {
+    displayInfoBar(context, builder: (context, close) {
+      return InfoBar(
+        title: Text('Failed to $type!'),
+        content: Text(
+            '${type == 'Add' ? 'Adding' : type == 'Update' ? 'Updating' : type == 'Delete' ? 'Deleting' : type} could not be succesfuly completed. Please try again another time.'),
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
         ),
-      ],
-    ),
-  );
-  return result ?? 'canceled';
+        style: InfoBarThemeData(
+          decoration: (severity) {
+            return const BoxDecoration(color: Colors.white);
+          },
+        ),
+        severity: InfoBarSeverity.error,
+      );
+    });
+  }
 }
 
-Future<String> showUpdatePackageDialog(
-    BuildContext context, List<Map<String, dynamic>> packages) async {
-  final result = await showDialog<String>(
+Future<bool> showPackageDialog(BuildContext context,
+    {required String type, List<Map<String, dynamic>>? packages}) async {
+  // Type can be of types: 'Add', 'Update', 'Delete', or 'Reset'
+  // Returns false if canceled and true if main action button pressed
+  final bool? result = await showDialog<bool>(
     context: context,
-    builder: (context) => ContentDialog(
-      title: Text('Update ${packages.length == 1 ? 'package' : 'packages'}?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '${packages.length == 1 ? 'Package' : 'Packages'} currently eligible for update listed below will be updated.',
-            style: const TextStyle(fontSize: 16),
-          ),
-          for (Map<String, dynamic> pack in packages)
-            Text(pack['name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
-        ],
-      ),
-      actions: [
-        Button(
-          child: const Text('Update'),
-          onPressed: () {
-            Navigator.pop(context, 'updated');
-            // Update packages here
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
-  );
-  return result ?? 'canceled';
-}
+    builder: (context) {
+      // Vars and stream setup
+      final TextEditingController controllerURL = TextEditingController();
+      final TextEditingController controllerCode = TextEditingController();
+      String pickedFileContent = '';
+      StreamController<bool> isWorkingStream =
+          StreamController<bool>.broadcast();
+      isWorkingStream.add(false);
+      StreamController<String> pickedFileName =
+          StreamController<String>.broadcast();
+      final reader = FileReader();
+      // Determine type
+      Widget body;
+      if (type == 'Add') {
+        body = Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Pick a zip package or enter URL'),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: FilledButton(
+                child: StreamBuilder<String>(
+                  stream: pickedFileName.stream,
+                  builder: (context, snapshot) {
+                    return Text(
+                        (snapshot.hasData) ? snapshot.data! : 'Pick package');
+                  },
+                ),
+                onPressed: () async {
+                  FileUploadInputElement fileUploadInput =
+                      FileUploadInputElement();
+                  fileUploadInput.accept = '.zip';
+                  fileUploadInput.click();
 
-Future<String> showAddPackageDialog(BuildContext context) async {
-  final TextEditingController controller = TextEditingController();
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      title: const Text('Add package'),
-      content: TextBox(
-        placeholder: 'GitHub or npm URL',
-        controller: controller,
-      ),
-      actions: [
-        Button(
-          child: const Text('Add'),
-          onPressed: () {
-            Navigator.pop(context, controller.text);
-            // Add package here
-            // Must check if package with same name and version already exists or not
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
+                  fileUploadInput.onChange.listen((e) {
+                    final files = fileUploadInput.files;
+                    if (files != null && files.length == 1) {
+                      final file = files[0];
+
+                      reader.onLoadStart.listen((event) {
+                        pickedFileName.add('Loading package...');
+                      });
+
+                      reader.onLoad.listen((e) {
+                        final bytes = reader.result as List<int>;
+                        pickedFileContent = base64Encode(bytes);
+                        // pickedFileContent = reader.result.toString().substring(
+                        //     41); // remove 'data:application/x-zip-compressed;base64,'
+                        pickedFileName.add(file.name);
+                      });
+                      reader.readAsArrayBuffer(file);
+
+                      // Convert the file contents to a base64 encoded string
+
+                      // reader.readAsDataUrl(file);
+                    }
+                  });
+                  // FilePickerResult? result = await FilePicker.platform
+                  //     .pickFiles(
+                  //         allowedExtensions: ['zip'],
+                  //         type: FileType.custom,
+                  //         allowMultiple: false,
+                  //         lockParentWindow: true,
+                  //         dialogTitle: 'Pick a zip package to upload');
+
+                  // if (result != null) {
+                  //   pickedFileContent = base64Encode(
+                  //       File(result.files.single.path!).readAsBytesSync());
+                  // } else {
+                  //   // User canceled the picker
+                  // }
+                },
+              ),
+            ),
+            TextBox(
+              placeholder: 'Enter npm URL',
+              controller: controllerURL,
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('JS Program:'),
+            ),
+            TextBox(
+              placeholder: 'Program',
+              minLines: 3,
+              maxLines: 6,
+              controller: controllerCode,
+            ),
+          ],
+        );
+      } else if (type == 'Update') {
+        body = packages == null
+            ? Container()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${packages.length == 1 ? 'Package' : 'Packages'} listed below will be updated if available.',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  for (Map<String, dynamic> pack in packages)
+                    Text(
+                        pack['Name']) // CHECK IF A PACKAGE CAN BE UDPATED FIRST
+                ],
+              );
+      } else if (type == 'Delete') {
+        body = packages == null
+            ? Container()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'If you delete ${packages.length == 1 ? 'this package' : 'these packages'}, you won\'t be able to recover ${packages.length == 1 ? 'it' : 'them'}. Do you want to delete ${packages.length == 1 ? 'it' : 'them'}?',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  for (Map<String, dynamic> pack in packages) Text(pack['Name'])
+                ],
+              );
+      } else if (type == 'Reset') {
+        body = Text(
+          'Are you sure you want to reset the app to default state?',
+          style: const TextStyle(fontSize: 16),
+        );
+      } else {
+        body = const Text('Invalid dialog type');
+      }
+      // Dialog
+      return ContentDialog(
+        title: Text('$type package'),
+        content: StreamBuilder<bool>(
+            stream: isWorkingStream.stream,
+            builder: (context, snapshot) {
+              return (snapshot.hasData && snapshot.data == true)
+                  ? const SizedBox(
+                      height: 32, width: double.infinity, child: ProgressBar())
+                  : body;
+            }),
+        actions: [
+          StreamBuilder<bool>(
+              stream: isWorkingStream.stream,
+              builder: (context, snapshot) {
+                return FilledButton(
+                  onPressed: (snapshot.hasData && snapshot.data == true)
+                      ? null
+                      : () async {
+                          isWorkingStream.add(true);
+
+                          if (type == 'Add') {
+                            await APICaller.addPackage(
+                                    data: controllerURL.text.isEmpty
+                                        ? pickedFileContent
+                                        : controllerURL.text,
+                                    code: controllerCode.text)
+                                .then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
+                          }
+                          // else if (type == 'Update') {
+                          //   await APICaller.updatePackages(packages: packages!)
+                          //       .then((value) {
+                          //     showSuccessFailInfoBar(context, value, type);
+                          //     Navigator.pop(context, value);
+                          //   });
+                          // }
+                          else if (type == 'Delete') {
+                            await APICaller.deletePackages(packages: packages!)
+                                .then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
+                          } else if (type == 'Reset') {
+                            await APICaller.factoryReset().then((value) {
+                              showSuccessFailInfoBar(context, value, type);
+                              Navigator.pop(context, value);
+                            });
+                          }
+                        },
+                  child: Text(type),
+                );
+              }),
+          StreamBuilder<bool>(
+              stream: isWorkingStream.stream,
+              builder: (context, snapshot) {
+                return Button(
+                  onPressed: (snapshot.hasData && snapshot.data == true)
+                      ? null
+                      : () {
+                          reader.abort();
+                          Navigator.pop(context, false);
+                        },
+                  child: const Text('Cancel'),
+                );
+              }),
+        ],
+      );
+    },
   );
-  return result ?? 'canceled';
+  return result ?? false;
 }
 
 Future<String> showPropertiesDialog(BuildContext context,
     {required Map<String, dynamic> data}) async {
+  final int size = await APICaller.packageSize(package: data);
   final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      style: const ContentDialogThemeData(bodyStyle: TextStyle(fontSize: 20)),
-      title: const Text('Properties'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            propertyRow(name: 'Name', value: data['name'].toString()),
-            propertyRow(name: 'ID', value: data['id'].toString()),
-            propertyRow(
-                name: 'Rating',
-                value: double.parse('${data['rating']}').toStringAsFixed(2)),
-            propertyRow(name: 'Version', value: data['version'].toString()),
-            propertyRow(name: 'Description', value: data['info'].toString()),
-            propertyRow(name: 'URL', value: data['url'].toString()),
-          ],
-        ),
-      ),
-      actions: [
-        FilledButton(
-          child: const Text('Close'),
-          onPressed: () => Navigator.pop(context, 'canceled'),
-        ),
-      ],
-    ),
-  );
+      context: context,
+      builder: (context) => ContentDialog(
+            style: const ContentDialogThemeData(
+                bodyStyle: TextStyle(fontSize: 20)),
+            title: const Text('Properties'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  propertyRow(name: 'Name', value: data['Name'].toString()),
+                  propertyRow(name: 'ID', value: data['ID'].toString()),
+                  propertyRow(
+                      name: 'Rating',
+                      value: double.parse('${data['NetScore']}')
+                          .toStringAsFixed(2)),
+                  propertyRow(
+                      name: 'Version', value: data['Version'].toString()),
+                  propertyRow(name: 'Size', value: '$size bytes'),
+                ],
+              ),
+            ),
+            actions: [
+              FilledButton(
+                child: const Text('Close'),
+                onPressed: () => Navigator.pop(context, 'canceled'),
+              ),
+            ],
+          ));
   return result ?? 'canceled';
 }
 
@@ -158,22 +317,11 @@ Widget propertyRow({required String name, required String value}) {
           ),
         ),
         if (value.length > 20)
-          GestureDetector(
-            onTap: () {
-              if (name == 'URL') {
-                // TODO
-              }
-            },
+          SingleChildScrollView(
             child: Text(
               style: TextStyle(
-                  fontSize: 14,
-                  color: (name == 'URL') ? Colors.blue : Colors.black,
-                  decoration: (name == 'URL')
-                      ? TextDecoration.underline
-                      : TextDecoration.none),
-              overflow: TextOverflow.fade,
-              softWrap: true,
-              maxLines: 6,
+                fontSize: 14,
+              ),
               value,
             ),
           )

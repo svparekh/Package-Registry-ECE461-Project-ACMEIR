@@ -1,29 +1,39 @@
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/rendering.dart';
 
 import 'data.dart' show PackageRegistry;
 import 'firebase_options.dart' show DefaultFirebaseOptions;
 import 'home.dart' show HomePage;
-import 'login.dart' show LoginPage;
+// import 'login.dart' show LoginPage;
 
 //
 // Constants
 
-const List<String> columns = [
-  "ID",
-  "Package Name",
-  "Version",
-  "Rating",
-  "Properties"
-];
-const double trailingSize = 100.0;
-const String siteName = 'ACME Package Registry';
-const Color offwhite = Color.fromARGB(255, 241, 241, 241);
-const Color offwhiteDark = Color.fromARGB(255, 222, 222, 222);
+class PresetValues {
+  static const double trailingSize = 80.0;
+  static const String siteName = 'ACME Package Registry';
+  static const Color offwhite = Color.fromARGB(255, 241, 241, 241);
+  static const Color offwhiteDark = Color.fromARGB(255, 222, 222, 222);
+  static const List<String> columns = [
+    "ID",
+    "Package Name",
+    "Version",
+    "Rating",
+    "Actions"
+  ];
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Accessibility
+  RendererBinding.instance.setSemanticsEnabled(true);
+  document.querySelector("meta[name=viewport]")!.setAttribute('content',
+      "width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes");
 
   // setup firebase
   await Firebase.initializeApp(
@@ -41,8 +51,6 @@ class WebApp extends StatefulWidget {
 }
 
 class _WebAppState extends State<WebApp> with WidgetsBindingObserver {
-  // Theme
-  final ThemeMode _themeMode = ThemeMode.system;
   @override
   void initState() {
     super.initState();
@@ -66,12 +74,11 @@ class _WebAppState extends State<WebApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
+      locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
-      title: siteName,
-      themeMode: _themeMode,
+      title: PresetValues.siteName,
       theme: FluentThemeData(brightness: Brightness.light),
-      darkTheme: FluentThemeData(brightness: Brightness.dark),
-      home: const NavPage(title: siteName),
+      home: const NavPage(title: PresetValues.siteName),
     );
   }
 }
@@ -101,9 +108,12 @@ class _NavPageState extends State<NavPage> {
             animation: animation, child: child);
       },
       key: _viewKey,
-      appBar: const NavigationAppBar(
+      appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        title: Text(siteName, style: TextStyle(fontSize: 18)),
+        title: Text(PresetValues.siteName,
+            style: TextStyle(
+              fontSize: 18,
+            )),
       ),
       pane: NavigationPane(
           selected: _pageIndex,
@@ -121,12 +131,12 @@ class _NavPageState extends State<NavPage> {
                   future: PackageRegistry().importData(),
                 )),
             // Login navbar item
-            PaneItem(
-                icon: const Icon(FluentIcons.contact),
-                title: const Text(
-                  "Login",
-                ),
-                body: const LoginPage()),
+            // PaneItem(
+            //     icon: const Icon(FluentIcons.contact),
+            //     title: const Text(
+            //       "Login",
+            //     ),
+            //     body: const LoginPage()),
           ],
           onChanged: (value) {
             setState(() {

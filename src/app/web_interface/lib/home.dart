@@ -1,10 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+import 'api.dart';
 import 'data.dart' show PackageRegistry;
-import 'popup.dart'
-    show showAddPackageDialog, showDeletePackageDialog, showUpdatePackageDialog;
+import 'popup.dart' show showPackageDialog, showSuccessFailInfoBar;
 import 'database_table.dart' show DatabaseCell, DatabaseTable;
-import 'main.dart' show columns, offwhite, trailingSize;
+import 'main.dart' show PresetValues;
 import 'wavy_bg.dart' show WavingBackground;
 
 class HomePage extends StatefulWidget {
@@ -78,7 +78,9 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(fontSize: 16),
                 leadingIcon: const Padding(
                   padding: EdgeInsets.all(8),
-                  child: Icon(FluentIcons.search),
+                  child: Tooltip(
+                      message: 'Search packages',
+                      child: Icon(FluentIcons.search)),
                 ),
               )),
           // Command Bar / Filter options
@@ -91,61 +93,86 @@ class _HomePageState extends State<HomePage> {
               primaryItems: [
                 CommandBarButton(
                   onPressed: () async {
-                    // Call method to refresh data (make sure _pr.filteredData is also adjusted)
-                    refreshSuccess = await PackageRegistry().importData();
-                    setState(() {
-                      _searchController.clear();
-                      _pr.filteredData = PackageRegistry().data;
-                      _pr.selectedData = [];
-                    });
+                    // Call reset method
+                    bool result =
+                        await showPackageDialog(context, type: 'Reset');
+                    if (result) {
+                      _onRefresh();
+                    }
                   },
-                  icon: const Icon(FluentIcons.update_restore),
+                  icon: Tooltip(
+                      message: 'Reset app to default state',
+                      child: Icon(
+                        FluentIcons.reset,
+                        color: Colors.red,
+                      )),
+                  label: Text(
+                    "Reset",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                CommandBarButton(
+                  onPressed: _onRefresh,
+                  icon: const Tooltip(
+                      message: 'Refresh package list',
+                      child: Icon(FluentIcons.update_restore)),
                   label: const Text(
                     "Refresh",
-                    semanticsLabel: 'Refresh',
                   ),
                 ),
                 CommandBarButton(
                     onPressed: () async {
-                      // Call add method (make one in PackageRegistry)
-                      String result = await showAddPackageDialog(context);
-                      setState(() {});
+                      // Call add method
+                      bool result =
+                          await showPackageDialog(context, type: 'Add');
+                      if (result) {
+                        _onRefresh();
+                      }
                     },
-                    icon: const Icon(FluentIcons.add),
+                    icon: const Tooltip(
+                        message: 'Add a new package',
+                        child: Icon(FluentIcons.add)),
                     label: const Text(
                       'Add',
-                      semanticsLabel: 'Add',
                     )),
                 CommandBarButton(
                   onPressed: _pr.selectedData.isEmpty
                       ? null
                       : () async {
-                          // Call delete method (make one in PackageRegistry)
-                          String result = await showDeletePackageDialog(
-                              context, _pr.selectedData);
-                          setState(() {});
+                          // Call delete method
+                          bool result = await showPackageDialog(context,
+                              type: 'Delete', packages: _pr.selectedData);
+                          if (result) {
+                            _onRefresh();
+                          }
                         },
-                  icon: const Icon(FluentIcons.delete),
+                  icon: const Tooltip(
+                      message: 'Delete the selected packages',
+                      child: Icon(FluentIcons.delete)),
                   label: Text(
                     'Delete${_pr.selectedData.isEmpty ? '' : ' (${_pr.selectedData.length})'}',
                     semanticsLabel: 'Delete selected',
                   ),
                 ),
-                CommandBarButton(
-                  onPressed: _pr.selectedData.isEmpty
-                      ? null
-                      : () async {
-                          // Call update method (make one in PackageRegistry)
-                          String result = await showUpdatePackageDialog(
-                              context, _pr.selectedData);
-                          setState(() {});
-                        },
-                  icon: const Icon(FluentIcons.download),
-                  label: Text(
-                    'Update${_pr.selectedData.length <= 1 ? '' : ' All'}',
-                    semanticsLabel: 'Update selected',
-                  ),
-                ),
+                // CommandBarButton(
+                //   onPressed: _pr.selectedData.isEmpty
+                //       ? null
+                //       : () async {
+                //           // Call update method
+                //           bool result = await showPackageDialog(context,
+                //               type: 'Update', packages: _pr.selectedData);
+                //           if (result) {
+                //             _onRefresh();
+                //           }
+                //         },
+                //   icon: Tooltip(
+                //       message: 'Update the selected packages',
+                //       child: const Icon(FluentIcons.download)),
+                //   label: Text(
+                //     'Update${_pr.selectedData.length <= 1 ? '' : ' All'}',
+                //     semanticsLabel: 'Update selected',
+                //   ),
+                // ),
                 const CommandBarSeparator(),
                 CommandBarButton(
                   onPressed: () {},
@@ -155,13 +182,13 @@ class _HomePageState extends State<HomePage> {
                       semanticsLabel: 'Sort method selection dropdown',
                     ),
                     items: [
-                      for (int i = 0; i < columns.length - 1; i++)
+                      for (int i = 0; i < PresetValues.columns.length - 1; i++)
                         MenuFlyoutItem(
-                          text: Text(columns[i]),
+                          text: Text(PresetValues.columns[i]),
                           onPressed: () {
                             setState(
                               () {
-                                _pr.curSortMethod = columns[i];
+                                _pr.curSortMethod = PresetValues.columns[i];
                                 _pr.sortData();
                               },
                             );
@@ -172,31 +199,35 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CommandBarButton(
                     onPressed: () {},
-                    icon: Checkbox(
-                      semanticLabel: 'Sort ascending or descending',
-                      checked: _pr.isSortAscending,
-                      onChanged: (value) {
-                        setState(() {
-                          _pr.isSortAscending = value!;
-                          _pr.sortData();
-                        });
-                      },
-                      style: CheckboxThemeData(
-                        checkedIconColor: ButtonState.resolveWith(
-                            (states) => FluentTheme.of(context).checkedColor),
-                        uncheckedIconColor: ButtonState.resolveWith(
-                            (states) => FluentTheme.of(context).checkedColor),
-                        checkedDecoration: ButtonState.resolveWith((states) =>
-                            BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: FluentTheme.of(context).accentColor)),
-                        uncheckedDecoration: ButtonState.resolveWith((states) =>
-                            BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: FluentTheme.of(context).accentColor)),
-                        icon: _pr.isSortAscending
-                            ? FluentIcons.up
-                            : FluentIcons.down,
+                    icon: Tooltip(
+                      message:
+                          'Switch sort order between ascending or descending',
+                      child: Checkbox(
+                        semanticLabel: 'Sort ascending or descending',
+                        checked: _pr.isSortAscending,
+                        onChanged: (value) {
+                          setState(() {
+                            _pr.isSortAscending = value!;
+                            _pr.sortData();
+                          });
+                        },
+                        style: CheckboxThemeData(
+                          checkedIconColor:
+                              ButtonState.resolveWith((states) => Colors.white),
+                          uncheckedIconColor:
+                              ButtonState.resolveWith((states) => Colors.white),
+                          checkedDecoration: ButtonState.resolveWith((states) =>
+                              BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.blue)),
+                          uncheckedDecoration: ButtonState.resolveWith(
+                              (states) => BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.blue)),
+                          icon: _pr.isSortAscending
+                              ? FluentIcons.up
+                              : FluentIcons.down,
+                        ),
                       ),
                     ))
               ],
@@ -209,7 +240,8 @@ class _HomePageState extends State<HomePage> {
                   bottom: 25, left: 50, right: 50, top: 0),
               child: Container(
                 decoration: BoxDecoration(
-                    color: offwhite, borderRadius: BorderRadius.circular(15)),
+                    color: PresetValues.offwhite,
+                    borderRadius: BorderRadius.circular(15)),
                 child: Column(
                   children: [
                     // Column names
@@ -238,30 +270,51 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                       ),
-                      title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for (int i = 0; i < columns.length - 1; i++)
-                              DatabaseCell(
-                                width: MediaQuery.of(context).size.width /
-                                    (columns.length + 1),
-                                text: columns[i],
-                              )
-                          ]),
+                      title: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: [
+                          for (int i = 0;
+                              i < PresetValues.columns.length - 1;
+                              i++)
+                            DatabaseCell(
+                              width: MediaQuery.of(context).size.width / 5,
+                              text: PresetValues.columns[i],
+                            )
+                        ]),
+                      ),
                       trailing: DatabaseCell(
-                        text: columns[columns.length - 1],
-                        width: trailingSize,
+                        text: PresetValues
+                            .columns[PresetValues.columns.length - 1],
+                        width: PresetValues.trailingSize,
                       ),
                     ),
                     // List of data
                     Expanded(
-                      child: (widget.importDataSuccess || refreshSuccess)
+                      child: (widget.importDataSuccess ||
+                              refreshSuccess ||
+                              _pr.filteredData.isNotEmpty)
                           ? DatabaseTable(
                               data: _pr.filteredData,
                               editSelected: editSelected,
                             )
-                          : const Text(
-                              'Could not load data. You may be signed out.'),
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: Column(
+                                children: const [
+                                  Tooltip(
+                                    message:
+                                        'Warning: Data could not be loaded from cloud database. You may be signed out or there may be no packages within the database to display.',
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        'No data available for viewing. You may be signed out or there may be no packages.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -271,5 +324,13 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  _onRefresh() async {
+    // Call method to refresh data
+    refreshSuccess = await PackageRegistry().importData();
+    setState(() {
+      _searchController.clear();
+    });
   }
 }
