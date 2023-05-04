@@ -17,6 +17,17 @@ def lambda_handler(event, context):
     
     response = requests.get(url, timeout=60).json()
     
+    if "error" in response:
+    
+        return {
+            "statusCode": 404,
+            "headers": {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": "Package does not exist."
+        }
+
     responsive_maintainer_score = response['fields']['ResponsiveMaintainerScore']['stringValue']
     ramp_up_score = response['fields']['RampUpScore']['stringValue']
     bus_factor_score = response['fields']['BusFactorScore']['stringValue']

@@ -16,5 +16,5 @@ def lambda_handler(event, context):
             "Content-Type": "application/json",
             'Access-Control-Allow-Origin': '*',
         },
-        "body": "No token"
+        "body": "This system does not support authentication."
     }
