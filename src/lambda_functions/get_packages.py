@@ -16,6 +16,17 @@ def lambda_handler(event, context):
     # get packages
     url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/"
     response = requests.get(url, timeout=60).json()
+
+    if not 'documents' in response.keys():
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": json.dumps([])
+        }
+
     packages = response['documents']
     
     # establish name->version dictionary
@@ -36,6 +47,16 @@ def lambda_handler(event, context):
         query_name = query['Name']
         query_version = query['Version']
         
+        if not query_name in name_to_version.keys():
+            return {
+                "statusCode": 200,
+                "headers": {
+                    "Content-Type": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                },
+                "body": json.dumps([])
+            }
+
         if len(query_version) == 5: # exact version
             if query_name == "*":
                 for name in name_to_version:
