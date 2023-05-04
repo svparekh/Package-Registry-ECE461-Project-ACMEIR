@@ -13,7 +13,8 @@ def lambda_handler(event, context):
     return { 
         "statusCode": 501,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
         },
-        "body": "No token"
+        "body": "This system does not support authentication."
     }

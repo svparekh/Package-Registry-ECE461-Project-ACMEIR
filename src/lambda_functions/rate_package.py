@@ -17,6 +17,17 @@ def lambda_handler(event, context):
     
     response = requests.get(url, timeout=60).json()
     
+    if "error" in response:
+    
+        return {
+            "statusCode": 404,
+            "headers": {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": "Package does not exist."
+        }
+
     responsive_maintainer_score = response['fields']['ResponsiveMaintainerScore']['stringValue']
     ramp_up_score = response['fields']['RampUpScore']['stringValue']
     bus_factor_score = response['fields']['BusFactorScore']['stringValue']
@@ -27,20 +38,21 @@ def lambda_handler(event, context):
     net_score = response['fields']['NetScore']['stringValue']
     
     scores = {
-      "BusFactor": bus_factor_score,
-      "Correctness": correctness_score,
-      "RampUp": ramp_up_score,
-      "ResponsiveMaintainer": responsive_maintainer_score,
-      "LicenseScore": license_score,
-      "GoodPinningPractice": fraction_dependencies_score,
-      "PullRequest": fraction_reviewed_score,
-      "NetScore": net_score
+        "BusFactor": bus_factor_score,
+        "Correctness": correctness_score,
+        "RampUp": ramp_up_score,
+        "ResponsiveMaintainer": responsive_maintainer_score,
+        "LicenseScore": license_score,
+        "GoodPinningPractice": fraction_dependencies_score,
+        "PullRequest": fraction_reviewed_score,
+        "NetScore": net_score
     }
 
     return {
-      "statusCode": 200,
-      "headers": {
-          "Content-Type": "application/json"
-      },
-      "body": json.dumps(scores)
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
+        },
+        "body": json.dumps(scores)
     }

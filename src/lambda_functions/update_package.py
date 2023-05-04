@@ -36,7 +36,8 @@ def lambda_handler(event, context):
         return {
             "statusCode": 404,
             "headers": {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
             },
             "body": "Package does not exist."
         }
@@ -96,13 +97,13 @@ def lambda_handler(event, context):
     # } 
 
     # do we need to check that union type is maintained here?
-    if package_url != 'notFound': 
+    if package_url != 'notFound' and package_url != None: 
         document["fields"]['URL'] = {}
         document["fields"]['URL']['stringValue'] = package_url
-    if package_jsprogram != 'notFound': 
+    if package_jsprogram != 'notFound' and package_jsprogram != None: 
         document["fields"]['JSProgram'] = {}
         document["fields"]['JSProgram']['stringValue'] = package_jsprogram
-    if package_content != 'notFound': 
+    if package_content != 'notFound' and package_content != None: 
         # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
         url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+package_id
         requests.delete(url, timeout=60)
@@ -156,7 +157,8 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
         },
         "body": "Version is updated."
     }
