@@ -118,6 +118,7 @@ License ................ 6 (6/20 = 0.30)
 Total .................. 20 (20/20 = 1)
 ```
 
+The NetScore can be calculated using the weights with this formula:
 
 ```text
 NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintainer + 6 * License) / 20
@@ -133,33 +134,35 @@ Below are the formulas, descriptions, and reasonings for each of the five subrat
 RampUp = ( README (exists) * .5 ) + ( Documentation (exists) * .5 )
 ```
 
-- How easily new engineers can 'ramp up' or learn the code
-- **Reasoning:** Gives a good idea of the available resources for new developers to understand how the code base operates
+How easily new engineers can 'ramp up' or learn the code.
+
+**Reasoning:** Gives a good idea of the available resources for new developers to understand how the code base operates
 
 ```text
 Correctness = # closed issues / # all issues, if # all issues > 0, else 0
 ```
 
-- **Reasoning:** The given formula demonstrates how well the repository contributors respond to inevitable bugs in the code base
+**Reasoning:** The given formula demonstrates how well the repository contributors respond to inevitable bugs in the code base
 
 ```text
 BusFactor = 1 - (1 / # of contributors)
 ```
 
-- How many authors can (hypothetically) be hit by a bus and the project is still ok
-- **Reasoning:** Each contributor adds a specific need for the project therefore, the bus factor correspond to the number of contributors
+How many authors can (hypothetically) be hit by a bus and the project is still ok.
+
+**Reasoning:** Each contributor adds a specific need for the project therefore, the bus factor correspond to the number of contributors
 
 ```text
 ResponsiveMaintainer = 1 / (weeks since last opened issue)
 ```
 
-- **Reasoning:** Depending on how many and how recent issues were posted, we know if it was more issues recently that there are people maintaining the repo relatively responsively
+**Reasoning:** Depending on how many and how recent issues were posted, we know if it was more issues recently that there are people maintaining the repo relatively responsively
 
 ```text
 License = If GNU LGPL 2.1, then 1, else 0
 ```
 
-- **Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
+**Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
 
 #### API's Used for Metric Calculations
 
