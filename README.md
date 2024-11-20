@@ -407,7 +407,7 @@ Justification: Allowed the team to easily access the downloaded packages, withou
 
 ![Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image7.png)
 
-Image 7: ADA Compliance Certificate
+*Image 7: ADA Compliance Certificate*
 
 For our ADA compliance audit, we used [accessiBe](https://accessibe.com/). accessiBe is the web accessibility market leader, powering the accessibility of tens-of-thousands of websites, from small businesses to industry-leading enterprises.
 
