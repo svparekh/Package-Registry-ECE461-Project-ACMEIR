@@ -163,7 +163,7 @@ We will use regular expressions to determine whether the repository is from GitH
 
 ### Architecture
 
-![*Diagram 1: Part 1 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram1.png)
+![*Diagram 1: Part 1 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram1.png)
 
 *Diagram 1: Part 1 Architecture*
 
@@ -175,7 +175,7 @@ The flowchart shows how these components work together to analyze and categorize
 - **GitHub API**: Provides data from GitHub repositories.
 - **Source Repository**: Repository of package being analyzed, interacted with using the GitHub API.
 
-![*Diagram 2: Part 1 Scoring Process*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram2.png)
+![*Diagram 2: Part 1 Scoring Process*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram2.png)
 
 *Diagram 2: Part 1 Scoring Process*
 
@@ -301,11 +301,11 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 ### Architecture
 
-![*Diagram 3: Part 2 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram3.png)
+![*Diagram 3: Part 2 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram3.png)
 
 *Diagram 3: Part 2 Architecture*
 
-![*Diagram 4: Part 2 Cloud Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram4.png)
+![*Diagram 4: Part 2 Cloud Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram4.png)
 
 *Diagram 4: Part 2 Cloud Architecture*
 
@@ -327,27 +327,27 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 ### Screenshots
 
-[Image 1: Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image1.png)
+[Image 1: Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image1.png)
 
 *Image 1: Package Registry UI*
 
-![Image 2: UI for properties of a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image2.png)
+![Image 2: UI for properties of a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image2.png)
 
 *Image 2: UI for properties of a package*
 
-[Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image3.png)
+[Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image3.png)
 
 *Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.*
 
-[Image 4: Sorting packages in Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image4.png)
+[Image 4: Sorting packages in Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image4.png)
 
 *Image 4: Sorting packages in Package Registry UI*
 
-![Image 5: Reset the whole app, returns to factory setting with no packages](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image5.png)
+![Image 5: Reset the whole app, returns to factory setting with no packages](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image5.png)
 
 *Image 5: Reset the whole app, returns to factory setting with no packages*
 
-[Image 6: UI for deleting a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image6.png)
+[Image 6: UI for deleting a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image6.png)
 
 *Image 6: UI for deleting a package*
 
@@ -383,7 +383,7 @@ Justification: Allowed the team to easily access the downloaded packages, withou
 
 ### ADA Compliance
 
-[Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image7.png)
+[Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image7.png)
 
 Image 7: ADA Compliance Certificate
 
@@ -455,7 +455,7 @@ Aligning with the six security properties defined by the [STRIDE article](https:
 
 ### Analysis of risks
 
-[*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram5.png)
+[*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram5.png)
 
 *Diagram 5: Security Architecture*
 
@@ -609,28 +609,26 @@ def lambda_handler(event, context):
 		"""
 		# First, we use the Google API to create a log of the deletion.
 		# used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
-    date = datetime.datetime.utcnow().isoformat()
-    log_id = date + '-' + str(int(random.random()*1000000))
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + log_id
-    requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}}), timeout=60).json()
-		
+        date = datetime.datetime.utcnow().isoformat()
+        log_id = date + '-' + str(int(random.random()*1000000))
+        url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + log_id
+        requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}}), timeout=60).json()
+
 		# Once the log is created, we need to ensure the package exists, thus a GET method is used.
 		# We use the API to get the metadata of the package stored in Firestore, and delete the metadata afterwards.
 		# We do not need to check if the package exists when deleting in Firestore since the API handles that.
-    path_id = event['path'][9:]
-    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + path_id
-    response = requests.get(url, timeout=60).json() 
-    requests.delete(url, timeout=60).json()
+        path_id = event['path'][9:]
+        url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + path_id
+        response = requests.get(url, timeout=60).json() 
+        requests.delete(url, timeout=60).json()
 
 		# If there was no error so far (thus package exists), then proceed to delete the package.
 		# The package contents are stored in Cloud Storage, thus if there really exists a package
 		# (i.e. Firestore had some package metadata), we proceed to delete it.
-    if not("error" in response):
-
-        # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
-        url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+path_id
-        response = requests.delete(url, timeout=60)
-        
+        if not("error" in response):
+            # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+            url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+path_id
+            response = requests.delete(url, timeout=60)
         # Return success
         return {
             "statusCode": 200,
@@ -640,7 +638,7 @@ def lambda_handler(event, context):
             },
             "body": "Package is deleted."
         }
-    
+
     # Error handling (in this case, no package was found after going through logic)
     return {
         "statusCode": 404,
@@ -665,6 +663,7 @@ There could be defects in the website as this is not checked, although this can 
 The following is the YAML for the workflow that will Lint and Test our repository.
 
 ```yaml
+
 # Pipeline to Lint and Test the Python code when a Pull Request (PR) is created.
 
 # used https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions for understanding yaml files
