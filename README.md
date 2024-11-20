@@ -6,15 +6,15 @@ By Setul Parekh, Nicholas Williams, David Reed, Chase McCoy
 
 An Internal Package Registry is a private system for managing dependencies within a company (in our case, ACME Corp). It provides enhanced security by allowing control over version numbers. This control ensures that all dependencies are checked for vulnerabilities before use. Additionally, it protects against potential issues introduced in newer versions available on the web, by allowing the company to either wait for a secure version or fix the vulnerability before updating the registry. Thus, it helps maintain system integrity and stability.
 
-<br><br>
+<br>
 
 An Internal Package Registry is a great showcase of the skills needed for a Backend Developer. Managing and maintaining an internal package registry requires a deep understanding of software dependencies, version control, and security practices. This includes the ability to detect vulnerabilities, fix potential issues, and ensure system stability. Additionally, the internal registry uses a Command Line Interface (CLI) to generate metrics for a given public repository. This process involves making API calls to fetch data about the repository. These API calls retrieve comprehensive information such as the number of commits, contributors, branches, pull requests, and other relevant details. Other data gathered includes comments to code ratio. After obtaining the data, the registry system analyzes it to produce meaningful metrics that help in evaluating the repository's health, security, and activity. All of these metrics help determine whether a package can be added to the registry.
 
-<br><br>
+<br>
 
 This is project is an **industry simulation** where ACME Corporation is hosting a competition to award a lucrative contract. The contract winner will need to build a trustworthy internal package registry. The competition involves creating a Command Line Interface (CLI) tool to assess the trustworthiness of [GitHub](https://github.com/) or [npm](https://www.npmjs.com/) packages. Your company participated but did not win, leading to its closure. However, you and your team have been hired by the winning company, Beta Software Solutions (BSS), to extend their implementation to meet ACME Corporation's new requirements. This requires refactoring and extending an existing system. The detailed requirements and context for this project are provided below.
 
-<br><br>
+<br>
 
 `Unfortunately, due to cost-saving measures, a live demo is unavailable as the AWS and GCP services have been shut down.`
 
@@ -39,15 +39,15 @@ This is project is an **industry simulation** where ACME Corporation is hosting 
 
 Link to Part 1 source code: [Source GitHub Repository](https://github.com/ECE-461-Project-Nick-David-Setul-Chase/ECE-461-Project)
 
-<br><br>
+<br>
 
 ACME Corporation has announced a lucrative contract opportunity, sparking significant interest among various companies in the tech industry. This contract is highly sought after due to its potential to bring substantial financial rewards and prestige to the winning company. To determine the most suitable candidate, ACME Corporation is hosting a rigorous competition. This competition will evaluate the capabilities and innovation of the participating companies, including your employer, which is one of the key contenders.
 
-<br><br>
+<br>
 
 The primary requirement for this competition is the development of a deliverable that can be executed through a Command Line Interface (CLI). This deliverable must provide a robust and reliable method for categorizing the trustworthiness of GitHub or npm packages. 
 
-<br><br>
+<br>
 
 This competition represents a significant opportunity for your company to showcase its expertise and innovation. Winning the contract with ACME Corporation would not only bring financial benefits but also enhance your company's reputation in the industry. As such, it is crucial to develop a solution that meets and exceeds ACME Corporation's expectations, demonstrating your company's ability to deliver high-quality, reliable, and innovative software solutions.
 
@@ -276,7 +276,7 @@ Your system must support the following general behaviors. Some behaviors are det
 - A security case should be made based on STRIDE.
 - Must employ RESTler to scan the system, and document the outcome. If RESTler misbehaves, open issue(s) and indicate how Microsoft resolves them.
 
-<br><br>
+<br>
 
 ACME Corporation places a high value on CI/CD. Your system should be using GitHub Actions to perform:
 
@@ -284,7 +284,7 @@ ACME Corporation places a high value on CI/CD. Your system should be using GitHu
     - You might conduct some tests (e.g. end-to-end performance tests with many clients) outside of your automated test pipeline.
 - Automated service deployment to GCP on successful merge (CD/Continuous Deployment)
 
-<br><br>
+<br>
 
 For consistent quality, ACME Corporation requests that every pull request receive a code review from at least two independent evaluators.
 
@@ -384,7 +384,7 @@ We have implemented a package manager that operates through an API, as well as a
 
 **Justification**: The combination of these files are used in part 1 code to pass metric data through the rest of the system, to calculate overall scores, and to test the system. These files had to be modified to integrate the two new metrics into the rest of the system. Modifications were relatively simple.
 
-<br><br>
+<br>
 
 *Changes to improve the reliability of the component so that our Part 2 implementation would satisfy the customer's requirements.*
 
@@ -408,7 +408,7 @@ Image 7: ADA Compliance Certificate
 
 For our ADA compliance audit, we used [accessiBe](https://accessibe.com/). accessiBe is the web accessibility market leader, powering the accessibility of tens-of-thousands of websites, from small businesses to industry-leading enterprises.
 
-<br><br>
+<br>
 
 This audit evaluates the adherence level of svparekh.github.io as of Tue May 02 2023, to the
 "Web Content Accessibility Guidelines" (WCAG) 2.1 level AA success criteria.
