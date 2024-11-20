@@ -6,9 +6,15 @@ By Setul Parekh, Nicholas Williams, David Reed, Chase McCoy
 
 An Internal Package Registry is a private system for managing dependencies within a company (in our case, ACME Corp). It provides enhanced security by allowing control over version numbers. This control ensures that all dependencies are checked for vulnerabilities before use. Additionally, it protects against potential issues introduced in newer versions available on the web, by allowing the company to either wait for a secure version or fix the vulnerability before updating the registry. Thus, it helps maintain system integrity and stability.
 
+<br><br>
+
 An Internal Package Registry is a great showcase of the skills needed for a Backend Developer. Managing and maintaining an internal package registry requires a deep understanding of software dependencies, version control, and security practices. This includes the ability to detect vulnerabilities, fix potential issues, and ensure system stability. Additionally, the internal registry uses a Command Line Interface (CLI) to generate metrics for a given public repository. This process involves making API calls to fetch data about the repository. These API calls retrieve comprehensive information such as the number of commits, contributors, branches, pull requests, and other relevant details. Other data gathered includes comments to code ratio. After obtaining the data, the registry system analyzes it to produce meaningful metrics that help in evaluating the repository's health, security, and activity. All of these metrics help determine whether a package can be added to the registry.
 
+<br><br>
+
 This is project is an **industry simulation** where ACME Corporation is hosting a competition to award a lucrative contract. The contract winner will need to build a trustworthy internal package registry. The competition involves creating a Command Line Interface (CLI) tool to assess the trustworthiness of [GitHub](https://github.com/) or [npm](https://www.npmjs.com/) packages. Your company participated but did not win, leading to its closure. However, you and your team have been hired by the winning company, Beta Software Solutions (BSS), to extend their implementation to meet ACME Corporation's new requirements. This requires refactoring and extending an existing system. The detailed requirements and context for this project are provided below.
+
+<br><br>
 
 `Unfortunately, due to cost-saving measures, a live demo is unavailable as the AWS and GCP services have been shut down.`
 
@@ -33,9 +39,15 @@ This is project is an **industry simulation** where ACME Corporation is hosting 
 
 Link to Part 1 source code: [Source GitHub Repository](https://github.com/ECE-461-Project-Nick-David-Setul-Chase/ECE-461-Project)
 
+<br><br>
+
 ACME Corporation has announced a lucrative contract opportunity, sparking significant interest among various companies in the tech industry. This contract is highly sought after due to its potential to bring substantial financial rewards and prestige to the winning company. To determine the most suitable candidate, ACME Corporation is hosting a rigorous competition. This competition will evaluate the capabilities and innovation of the participating companies, including your employer, which is one of the key contenders.
 
+<br><br>
+
 The primary requirement for this competition is the development of a deliverable that can be executed through a Command Line Interface (CLI). This deliverable must provide a robust and reliable method for categorizing the trustworthiness of GitHub or npm packages. 
+
+<br><br>
 
 This competition represents a significant opportunity for your company to showcase its expertise and innovation. Winning the contract with ACME Corporation would not only bring financial benefits but also enhance your company's reputation in the industry. As such, it is crucial to develop a solution that meets and exceeds ACME Corporation's expectations, demonstrating your company's ability to deliver high-quality, reliable, and innovative software solutions.
 
@@ -96,7 +108,7 @@ Given the requirements for Part 1 of this project, we came up with a formula to 
 
 The NetScore rating can be calculated through the sum of its subratings. Each subrating has a weight attached that it that indicates how impactful it is towards to NetScore. The weights add up to a total of 1, and each subrating is a value between `[0, 1]`. Shown in the table below are the specific weights of each subrating.
 
-```
+```text
 Factor                   Weight
 RampUp ................. 3 (3/20 = 0.15)
 Correctness ............ 4 (4/20 = 0.20)
@@ -106,7 +118,8 @@ License ................ 6 (6/20 = 0.30)
 Total .................. 20 (20/20 = 1)
 ```
 
-```
+
+```text
 NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintainer + 6 * License) / 20
 ```
 
@@ -116,34 +129,34 @@ NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintai
 
 Below are the formulas, descriptions, and reasonings for each of the five subratings.
 
-```
+```text
 RampUp = ( README (exists) * .5 ) + ( Documentation (exists) * .5 )
 ```
 
 - How easily new engineers can 'ramp up' or learn the code
 - **Reasoning:** Gives a good idea of the available resources for new developers to understand how the code base operates
 
-```
+```text
 Correctness = # closed issues / # all issues, if # all issues > 0, else 0
 ```
 
 - **Reasoning:** The given formula demonstrates how well the repository contributors respond to inevitable bugs in the code base
 
-```
+```text
 BusFactor = 1 - (1 / # of contributors)
 ```
 
 - How many authors can (hypothetically) be hit by a bus and the project is still ok
 - **Reasoning:** Each contributor adds a specific need for the project therefore, the bus factor correspond to the number of contributors
 
-```
+```text
 ResponsiveMaintainer = 1 / (weeks since last opened issue)
 ```
 
 - **Reasoning:** Depending on how many and how recent issues were posted, we know if it was more issues recently that there are people maintaining the repo relatively responsively
 
-```
-License *=* If GNU LGPL 2.1, then 1, else 0
+```text
+License = If GNU LGPL 2.1, then 1, else 0
 ```
 
 - **Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
@@ -263,11 +276,15 @@ Your system must support the following general behaviors. Some behaviors are det
 - A security case should be made based on STRIDE.
 - Must employ RESTler to scan the system, and document the outcome. If RESTler misbehaves, open issue(s) and indicate how Microsoft resolves them.
 
+<br><br>
+
 ACME Corporation places a high value on CI/CD. Your system should be using GitHub Actions to perform:
 
 - Automated tests (CI/Continuous Integration) on any pull request
     - You might conduct some tests (e.g. end-to-end performance tests with many clients) outside of your automated test pipeline.
 - Automated service deployment to GCP on successful merge (CD/Continuous Deployment)
+
+<br><br>
 
 For consistent quality, ACME Corporation requests that every pull request receive a code review from at least two independent evaluators.
 
@@ -327,7 +344,7 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 ### Screenshots
 
-[Image 1: Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image1.png)
+![Image 1: Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image1.png)
 
 *Image 1: Package Registry UI*
 
@@ -335,11 +352,11 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 *Image 2: UI for properties of a package*
 
-[Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image3.png)
+![Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image3.png)
 
 *Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.*
 
-[Image 4: Sorting packages in Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image4.png)
+![Image 4: Sorting packages in Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image4.png)
 
 *Image 4: Sorting packages in Package Registry UI*
 
@@ -347,7 +364,7 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 *Image 5: Reset the whole app, returns to factory setting with no packages*
 
-[Image 6: UI for deleting a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image6.png)
+![Image 6: UI for deleting a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image6.png)
 
 *Image 6: UI for deleting a package*
 
@@ -366,6 +383,8 @@ We have implemented a package manager that operates through an API, as well as a
 **Change 2**: Inside the 'src/controller' directory - Modifications to metric.rs, mod.rs, and tests.rs
 
 **Justification**: The combination of these files are used in part 1 code to pass metric data through the rest of the system, to calculate overall scores, and to test the system. These files had to be modified to integrate the two new metrics into the rest of the system. Modifications were relatively simple.
+
+<br><br>
 
 *Changes to improve the reliability of the component so that our Part 2 implementation would satisfy the customer's requirements.*
 
@@ -388,6 +407,8 @@ Justification: Allowed the team to easily access the downloaded packages, withou
 Image 7: ADA Compliance Certificate
 
 For our ADA compliance audit, we used [accessiBe](https://accessibe.com/). accessiBe is the web accessibility market leader, powering the accessibility of tens-of-thousands of websites, from small businesses to industry-leading enterprises.
+
+<br><br>
 
 This audit evaluates the adherence level of svparekh.github.io as of Tue May 02 2023, to the
 "Web Content Accessibility Guidelines" (WCAG) 2.1 level AA success criteria.
