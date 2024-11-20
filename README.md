@@ -43,7 +43,7 @@ This competition represents a significant opportunity for your company to showca
 
 The goal is to create a tool that can assess various aspects of these packages, ensuring that they meet high standards of security, reliability, and maintainability. The CLI tool should be capable of analyzing multiple metrics to determine the trustworthiness of a package. These metrics might include factors such as the number of contributors, the frequency of updates, the presence of comprehensive documentation, the resolution of issues, and the overall activity within the repository. By evaluating these criteria, the tool will help ACME Corporation identify packages that are safe to use and integrate into their systems. In addition to the technical requirements, ACME Corporation is looking for a solution that is user-friendly and efficient. The CLI tool should be easy to install and use, with clear instructions and minimal setup required. It should also be designed to handle large volumes of data, providing accurate and timely results even when analyzing extensive repositories. Sarah, your contact person from ACME Corporation, has provided detailed requirements that the company would like implemented in the deliverable.
 
-**Project Specifications**
+#### Project Specifications
 
 - Develop a quick command line interface that can support input from command line arguments
 - Easy to learn
@@ -54,7 +54,7 @@ The goal is to create a tool that can assess various aspects of these packages, 
 - Use *GNU Lesser General Public License v2.1* for all open-source software
 - Can produce list of repositories, ordered by trustworthiness
 
-**Internal Requirements**
+#### Internal Requirements
 
 - Executable file in root directory called `src/`
 - Should have the following CLI when executed on Linux machine
@@ -73,7 +73,7 @@ The goal is to create a tool that can assess various aspects of these packages, 
 - Both Github and npm URLs will be supported. Any npm repository that does not have a corresponding GitHub repository will not be supported, and an error message will be thrown.
 - Program must contain **at least 30%** source lines of code written in Rust
 
-**Metric Calculations**
+#### Metric Calculations
 
 - Metrics that need to be gathered: developer ramp-up time, code correctness, contributor bus factor, responsive maintainers, and package license.
 - Software need only support metric calculation on modules that are hosted on GitHub
@@ -92,7 +92,7 @@ The goal is to create a tool that can assess various aspects of these packages, 
 
 Given the requirements for Part 1 of this project, we came up with a formula to determine the trustworthiness of a package. This is done done through a rating (the NetScore) which can be divided into its subratings (`RampUp`, `Correctness`, `BusFactor`, `ResponsiveMaintainer`, `License`). 
 
-**The NetScore rating**
+#### The NetScore rating
 
 The NetScore rating can be calculated through the sum of its subratings. Each subrating has a weight attached that it that indicates how impactful it is towards to NetScore. The weights add up to a total of 1, and each subrating is a value between `[0, 1]`. Shown in the table below are the specific weights of each subrating.
 
@@ -112,7 +112,7 @@ NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintai
 
 **Reasoning:** The license is necessary and so it has the highest weighting. Next, the correctness and bus factor are second, as the code should be correct but also not be dependent on only a few contributors. Lastly, the RampUp and ResponsiveMaintainer are considered least significant, as the time to learn and how responsive changes are made is not as important as the correctness.
 
-**The SubRatings**
+#### The SubRatings
 
 Below are the formulas, descriptions, and reasonings for each of the five subratings.
 
@@ -148,7 +148,7 @@ License *=* If GNU LGPL 2.1, then 1, else 0
 
 - **Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
 
-**API's Used for Metric Calculations:**
+#### API's Used for Metric Calculations
 
 - `GitHub REST API`
     - **Reasoning:** Requirement as listed in requirement section.
@@ -157,7 +157,7 @@ License *=* If GNU LGPL 2.1, then 1, else 0
 - `Beautiful Soup API`
     - **Reasoning:** Allows us to analyze npm repositories, and find if they have a corresponding GitHub repository.
 
-**Handle URL Feature**
+#### Handle URL Feature
 
 We will use regular expressions to determine whether the repository is from GitHub or NPM. Based on that, we will either analyze the GitHub module, or use BeautifulSoup to analyze the npm page for its corresponding GitHub repository link.
 
@@ -285,15 +285,15 @@ Sarah reminds you that your team members are from an independent contracting fir
 
 ### Initial Considerations
 
-**Starting project analysis**
+#### Starting project analysis
 
 The project from Part 1 provided by BSS overall seems trustworthy. They seemed to do a thorough job testing the different modules in the repository.  There are also tests that run the system as a whole.  The only issue is that there is quite a bit of code overall and modules are also parallelized, so it may be harder to debug or it may be more likely to have bugs that haven't been found. These findings do not affect our milestones and timeline since most of the key data we need is given by the previous project. However, if there were some bugs or issues that arise while trying to implement our new system with the project we are building from, it may drastically change how long each milestone will take because of the complexity of their code.
 
-**Validation plan**
+#### Validation plan
 
 Correctness will be determined by the percentage of tests passed and also the amount of code coverage achieved.  For Rust code, we will try to use “cargo test” for testing the modules.  This was also used in the code received from the other team, so it seems like a good idea to use the same testing structure.  We will try to test as we go to make sure that what we add to the repository does not have errors, although this may be moved to a separate phase depending on time constraints.  We will also have other teammates do code reviews and will have tests run on pull requests.  We will incorporate logging to log when certain events happen, which will help to see when problems occur, especially when assembling components together.  We are not planning on running performance tests.
 
-**AWS + GCP**
+#### AWS + GCP
 
 One of the project requirements is to utilize an offering from Google Cloud Platform (GCP). However, due to specific functionalities we needed, we decided to also incorporate Amazon Web Services (AWS). AWS will handle the API and Lambda Functions, while the actual data for the packages will be stored in GCP.
 
@@ -403,7 +403,7 @@ Below are the relevant aspects that were tested and any missed criteria if appli
 
 ### Security: Requirements and Threat Model
 
-**Requirements**
+#### Requirements
 
 Aligning with the six security properties defined by the [STRIDE article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2006/november/uncover-security-design-flaws-using-the-stride-approach), provided below are the security requirements and analysis.
 
@@ -431,7 +431,7 @@ Aligning with the six security properties defined by the [STRIDE article](https:
 
 - None
 
-**Threat Model**
+#### Threat Model
 
 **Trust boundary #1**
 
@@ -458,6 +458,8 @@ Aligning with the six security properties defined by the [STRIDE article](https:
 [*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram5.png)
 
 *Diagram 5: Security Architecture*
+
+#### STRIDE Properties
 
 Below are the six [STRIDE](https://learn.microsoft.com/en-us/archive/msdn-magazine/2006/november/uncover-security-design-flaws-using-the-stride-approach) properties and their analysis.
 
@@ -539,7 +541,7 @@ Analysis of components:
     - Mitigations applied: Program is stored as a string and is not directly run by our systems.
     - Degree of risk resolution: Low
 
-**Security Risks**
+#### Security Risks
 
 **Risks we mitigated, and how**
 
