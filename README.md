@@ -405,7 +405,7 @@ Justification: Allowed the team to easily access the downloaded packages, withou
 
 ### ADA Compliance
 
-[Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image7.png)
+![Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/image7.png)
 
 Image 7: ADA Compliance Certificate
 
@@ -479,7 +479,7 @@ Aligning with the six security properties defined by the [STRIDE article](https:
 
 ### Analysis of risks
 
-[*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram5.png)
+![*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/master/images/diagram5.png)
 
 *Diagram 5: Security Architecture*
 
@@ -759,7 +759,7 @@ jobs:
 
 The following is a sample run of our test pipeline. As shown, the various tests for the API, controller, input, and output are passing.
 
-```
+```text
 ...
 Compiling backend v8.1.0 (/home/runner/work/ECE461-Project-ACMEIR/ECE461-Project-ACMEIR)
   Finished test [unoptimized + debuginfo] target(s) in 44.49s
@@ -840,4 +840,4 @@ Property of Purdue University ECE 461
 Dependencies are supported by the [GNU GPL](https://www.gnu.org/licenses/license-list.en.html) license.
 This software has no license support.
 
-https://media.licdn.com/dms/image/C560BAQFFhTOSK0IkUA/company-logo_200_200/0/1628271813820?e=2147483647&v=beta&t=t8XijiB1rlihGVKK4CmSVNxus8YNtV-pzuy91ssdSwE
+![Purdue CompE](https://media.licdn.com/dms/image/C560BAQFFhTOSK0IkUA/company-logo_200_200/0/1628271813820?e=2147483647&v=beta&t=t8XijiB1rlihGVKK4CmSVNxus8YNtV-pzuy91ssdSwE)
