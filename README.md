@@ -10,7 +10,7 @@ An Internal Package Registry is a great showcase of the skills needed for a Back
 
 This is project is an **industry simulation** where ACME Corporation is hosting a competition to award a lucrative contract. The contract winner will need to build a trustworthy internal package registry. The competition involves creating a Command Line Interface (CLI) tool to assess the trustworthiness of [GitHub](https://github.com/) or [npm](https://www.npmjs.com/) packages. Your company participated but did not win, leading to its closure. However, you and your team have been hired by the winning company, Beta Software Solutions (BSS), to extend their implementation to meet ACME Corporation's new requirements. This requires refactoring and extending an existing system. The detailed requirements and context for this project are provided below.
 
-`Unfortunately, due to cost-saving measures, a live demo is unavailable as the **AWS and GCP services have been shut down**.`
+`Unfortunately, due to cost-saving measures, a live demo is unavailable as the AWS and GCP services have been shut down.`
 
 ### Objectives
 
@@ -96,14 +96,15 @@ Given the requirements for Part 1 of this project, we came up with a formula to 
 
 The NetScore rating can be calculated through the sum of its subratings. Each subrating has a weight attached that it that indicates how impactful it is towards to NetScore. The weights add up to a total of 1, and each subrating is a value between `[0, 1]`. Shown in the table below are the specific weights of each subrating.
 
-| **Factor** | **Weight** |
-| --- | --- |
-| RampUp | 3 ( 3/20 = 0.15) |
-| Correctness | 4 (4/20 = 0.20) |
-| BusFactor | 4 (4/20 = 0.20) |
-| ResponsiveMaintainer | 3 ( 3/20 = 0.15) |
-| License | 6 (6/20 = 0.30) |
-| **Total** | 20 (20/20 = 1) |
+```
+Factor                   Weight
+RampUp ................. 3 (3/20 = 0.15)
+Correctness ............ 4 (4/20 = 0.20)
+BusFactor .............. 4 (4/20 = 0.20)
+ResponsiveMaintainer ... 3 (3/20 = 0.15)
+License ................ 6 (6/20 = 0.30)
+Total .................. 20 (20/20 = 1)
+```
 
 ```
 NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintainer + 6 * License) / 20
@@ -116,24 +117,36 @@ NetScore = (3 * RampUp + 4 * Correctness + 4 * BusFactor + 3 * ResponsiveMaintai
 Below are the formulas, descriptions, and reasonings for each of the five subratings.
 
 ```
-RampUp = *( README (exists) * .5 ) + ( Documentation (exists) * .5 )*
+RampUp = ( README (exists) * .5 ) + ( Documentation (exists) * .5 )
 ```
 
 - How easily new engineers can 'ramp up' or learn the code
 - **Reasoning:** Gives a good idea of the available resources for new developers to understand how the code base operates
 
 ```
-**Correctness** = *# closed issues / # all issues, if # all issues > 0, else 0*
+Correctness = # closed issues / # all issues, if # all issues > 0, else 0
 ```
 
 - **Reasoning:** The given formula demonstrates how well the repository contributors respond to inevitable bugs in the code base
-- **`BusFactor`** = *1 - (1 / # of contributors)*
-    - How many authors can (hypothetically) be hit by a bus and the project is still ok
-    - **Reasoning:** Each contributor adds a specific need for the project therefore, the bus factor correspond to the number of contributors
-- **`ResponsiveMaintainer`** = *1 / (weeks since last opened issue)*
-    - **Reasoning:** Depending on how many and how recent issues were posted, we know if it was more issues recently that there are people maintaining the repo relatively responsively
-- **`*License`** = If GNU LGPL 2.1, then 1, else 0*
-    - **Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
+
+```
+BusFactor = 1 - (1 / # of contributors)
+```
+
+- How many authors can (hypothetically) be hit by a bus and the project is still ok
+- **Reasoning:** Each contributor adds a specific need for the project therefore, the bus factor correspond to the number of contributors
+
+```
+ResponsiveMaintainer = 1 / (weeks since last opened issue)
+```
+
+- **Reasoning:** Depending on how many and how recent issues were posted, we know if it was more issues recently that there are people maintaining the repo relatively responsively
+
+```
+License *=* If GNU LGPL 2.1, then 1, else 0
+```
+
+- **Reasoning:** The repository license must be GNU LGPL 2.1 (or compatible) or it cannot be used by the company
 
 **API's Used for Metric Calculations:**
 
@@ -150,7 +163,7 @@ We will use regular expressions to determine whether the repository is from GitH
 
 ### Architecture
 
-![*Diagram 1: Part 1 Architecture*](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/b008941e-6980-4c8d-bdf2-b4604f0c20ff/image.png)
+![*Diagram 1: Part 1 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram1.png)
 
 *Diagram 1: Part 1 Architecture*
 
@@ -162,7 +175,7 @@ The flowchart shows how these components work together to analyze and categorize
 - **GitHub API**: Provides data from GitHub repositories.
 - **Source Repository**: Repository of package being analyzed, interacted with using the GitHub API.
 
-![*Diagram 2: Part 1 Scoring Process*](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/291830d2-a97d-4fac-a071-456119011152/image.png)
+![*Diagram 2: Part 1 Scoring Process*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram2.png)
 
 *Diagram 2: Part 1 Scoring Process*
 
@@ -288,46 +301,55 @@ Initially, we considered using an S3 bucket for data storage if we were solely r
 
 ### Architecture
 
-| **Tool** | **Justification** |
-| --- | --- |
-| Python | Entire team is comfortable with Python and Python has robust methods for analyzing and working with data. |
-| Rust | For the thirty percent code requirement |
-| REST API / GitHub | Used for GitHub actions, getting data |
-| Trello | Rather than using GitHub projects to keep track of our project, we will use Trello for progress tracking |
-| Visual Studio Code | IDE to code and run all three languages |
-| Google Cloud Platforms | Storage and hosting for running our system |
-| GCP Cloud Run | Cloud Run is used to host our website front-end. This will be built in Flutter, then containerized and deployed as a Docker image to Cloud Run. |
-| GCP Cloud Storage | Cloud Storage will be used to store the actual files in each package |
-| GCP Datastore | Datastore will be used to store the metadata associated with each package. Examples include version number, issues, contributors, and any other information that goes into our scoring function. |
-| cargo test | Rust test suite to run tests and ensure working condition of system |
-| Flutter/Dart | Flutter/Dart will be used for our web interface. This will make developing a web interface easier than using straight HTML, CSS, etc. |
-| AWS API Gateway | Provides an easy way to set up an API with the given OpenAPI spec |
-| AWS Lambda | Easily connects to API Gateway and allows us to run serverless functions for each API call |
-| Google Cloud Firestore | Allows us to store package information, such as metadata and the base64 string representing the files |
-
-![*Diagram 3: Part 2 Architecture*](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/69d2d6a7-34bd-4479-b1bf-bc04f8100b1e/image.png)
+![*Diagram 3: Part 2 Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram3.png)
 
 *Diagram 3: Part 2 Architecture*
 
-![*Diagram 4: Part 2 Cloud Architecture*](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/9b15dc3a-2e30-4a50-b1de-cee3e55e4749/image.png)
+![*Diagram 4: Part 2 Cloud Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram4.png)
 
 *Diagram 4: Part 2 Cloud Architecture*
+
+- **Python**: Entire team is comfortable with Python and Python has robust methods for analyzing and working with data.
+- **Rust**: For the thirty percent code requirement
+- **REST API / GitHub**: Used for GitHub actions, getting data
+- **Google Cloud Platforms**: Storage and hosting for running our system
+- **GCP Cloud Run**: Cloud Run is used to host our website front-end. This will be built in Flutter, then containerized and deployed as a Docker image to Cloud Run.
+- **GCP Datastore**: Datastore will be used to store the metadata associated with each package. Examples include version number, issues, contributors, and any other information that goes into our scoring function.
+- **GCP Firestore**: Allows us to store package information, such as metadata and the base64 string representing the files
+- **AWS API Gateway**: Provides an easy way to set up an API with the given OpenAPI spec
+- **AWS Lambda Functions**: Easily connects to API Gateway and allows us to run serverless functions for each API call
+- **cargo test**: Rust test suite to run tests and ensure working condition of system
+- **Flutter**: Flutter will be used for our web interface. This will make developing a web interface easier than using straight HTML, CSS, etc.
+- **Visual Studio Code**: IDE to code and run all three languages
+- **Trello**: Rather than using GitHub projects to keep track of our project, we will use Trello for progress tracking
 
 ## PART 3: Final Deliverable
 
 ### Screenshots
 
-https://lh7-rt.googleusercontent.com/docsz/AD_4nXeHC7qH3WudrGFLJfN0sExTsZ8lLGe-Ya0D0QHyYJXodYaDsbWZlD-j_-Yn3TJz67ntAAwb2EeFOPn8wTmIBrl6tyBX-U4m42CaC6u7Bek26mBbcDGCmG-h-Y8zD630atJd2LNcGhm2PBooQLBZWXa6eMCmv6l08nRF7XGYkw?key=JAMgH77mlo9KnWtQt27gug
+[Image 1: Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image1.png)
 
-![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/7040f3c2-f4cf-4e2f-903b-5a502c8dd480/image.png)
+*Image 1: Package Registry UI*
 
-https://lh7-rt.googleusercontent.com/docsz/AD_4nXcXDnbk1v1Y-7VOivW1pZ0HRklSnq-_mrDrrARW53fYO2lmJewRthuIqW80XPC5ap4wBq3NAl9RWz6jZvUEoCiZHIimC8pjQn4TNviBeqCNRhBxEgl-oD_uIDqK96dmqVn8gsTi8NepRGCHpKOXkaZlfvvsPJ9Xmuejsa97vQ?key=JAMgH77mlo9KnWtQt27gug
+![Image 2: UI for properties of a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image2.png)
 
-https://lh7-rt.googleusercontent.com/docsz/AD_4nXeg6soOUX0wyDJpr-l6ZoelZkpwhk8CFoEBNzjRDD4w-jziWayPhUp5XE8FbMTH5mQK-LCnW9r8uWOfmTLgnNW-23xW8B-Z7Bpwf6_X6SrC7XJyJgvTxCKx91ngCpQ-m10sFgJr0bo4zIv3FnOOlRQSTx4_0-LijzYCbCzV?key=JAMgH77mlo9KnWtQt27gug
+*Image 2: UI for properties of a package*
 
-![image (2).png](https://prod-files-secure.s3.us-west-2.amazonaws.com/ae12f0d5-d761-4fb9-805e-d457c8b478c2/fb124c36-8369-420f-a7b3-d60112152f94/image_(2).png)
+[Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image3.png)
 
-https://lh7-rt.googleusercontent.com/docsz/AD_4nXfMohtFL7JEK52afdquJIECsNPcyoyoWEI8nYkLEq_Uphf_Z7HGckMaPV9wGo5QMJR9IMDir1b02huXCTx8dx6TQGsMp9b7eGPEh92-Ihk-cEd7C9BOxjhaznZ25lHGHGQrd6u31nLiyTDNlcyxQht48zNE6gRUwqiz3Kko6g?key=JAMgH77mlo9KnWtQt27gug
+*Image 3: Add a package to registry UI. Can use a ZIP file, URL, or a JS program.*
+
+[Image 4: Sorting packages in Package Registry UI](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image4.png)
+
+*Image 4: Sorting packages in Package Registry UI*
+
+![Image 5: Reset the whole app, returns to factory setting with no packages](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image5.png)
+
+*Image 5: Reset the whole app, returns to factory setting with no packages*
+
+[Image 6: UI for deleting a package](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image6.png)
+
+*Image 6: UI for deleting a package*
 
 ### Overview
 
@@ -361,9 +383,9 @@ Justification: Allowed the team to easily access the downloaded packages, withou
 
 ### ADA Compliance
 
-[Image X: ADA Compliance Certificate](https://lh7-rt.googleusercontent.com/docsz/AD_4nXeR-xCxzOQIn-NHMrHxIFXJ0YmjEJKOBsNeUS_KJSccRkv5oa8D0-HYeglR7JS3aTVmtu98LwWTW5OyTrVyRhf2Ac2KS_KHr_rvdzc1UVW8nt91LVq726cZX0SDVRxv-6Mlh3jhd8xGhLpxQlXDZ5fpotwxeifslO3Bq7DU?key=JAMgH77mlo9KnWtQt27gug)
+[Image 7: ADA Compliance Certificate](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/image7.png)
 
-Image X: ADA Compliance Certificate
+Image 7: ADA Compliance Certificate
 
 For our ADA compliance audit, we used [accessiBe](https://accessibe.com/). accessiBe is the web accessibility market leader, powering the accessibility of tens-of-thousands of websites, from small businesses to industry-leading enterprises.
 
@@ -379,7 +401,9 @@ Below are the relevant aspects that were tested and any missed criteria if appli
     - ❌ Page landmarks should be tagged and described for assistive technology
 - **Readability** - *100%*
 
-### Security requirements and Thread model
+### Security: Requirements and Threat Model
+
+**Requirements**
 
 Aligning with the six security properties defined by the [STRIDE article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2006/november/uncover-security-design-flaws-using-the-stride-approach), provided below are the security requirements and analysis.
 
@@ -407,35 +431,31 @@ Aligning with the six security properties defined by the [STRIDE article](https:
 
 - None
 
-**Threat model**
+**Threat Model**
 
 **Trust boundary #1**
 
-Untrusted party: Outsider
-
-Someone who is attempting to access the data they are not entitled to and is not an ACME employee.
+- Untrusted party: *Outsider*
+- Someone who is attempting to access the data they are not entitled to and is not an ACME employee.
 
 **Trust boundary #2**
 
-Untrusted party: *Insider*
-
-Someone who is attempting to access the data they are not entitled to and is an ACME employee.
+- Untrusted party: *Insider*
+- Someone who is attempting to access the data they are not entitled to and is an ACME employee.
 
 **Trust boundary #3**
 
-Untrusted party: *Third-party*
-
-Someone who stumbled upon the website and now has access to the database through it.
+- Untrusted party: *Third-party*
+- Someone who stumbled upon the website and now has access to the database through it.
 
 **Trust boundary #4**
 
-Untrusted party: *Provider*
-
-GCP, AWS, or GitHub accessing our data or some security breach within the provider giving access to our data.
+- Untrusted party: *Provider*
+- GCP, AWS, or GitHub accessing our data or some security breach within the provider giving access to our data.
 
 ### Analysis of risks
 
-[*Diagram 5: Security Architecture*](https://lh7-rt.googleusercontent.com/docsz/AD_4nXcD8j_w98SWsf3UBB6Y-r2AMcVcHQPsgu-jbPznJdUWvLP9c1afFUWRpXlmRMhBjyAhN9aNEF3km1lUOineWwxZucIGcsXhfnyRmZrXRJymCx9cl5dTQHWIAIkuwU2xcih3vC_hQZEjroLVmlEVh8BYKb5MQFeZhAMSUJx0hg?key=JAMgH77mlo9KnWtQt27gug)
+[*Diagram 5: Security Architecture*](https://raw.githubusercontent.com/svparekh/Package-Registry-Project-ACMEIR/main/images/diagram5.png)
 
 *Diagram 5: Security Architecture*
 
@@ -519,32 +539,116 @@ Analysis of components:
     - Mitigations applied: Program is stored as a string and is not directly run by our systems.
     - Degree of risk resolution: Low
 
-Below are security risks that we did/did not mitigate.
+**Security Risks**
 
 **Risks we mitigated, and how**
 
-**Risk 1: Client and server connections**
+*Risk 1: Client and server connections*
 
 Mitigation approach: All connections are done through either html or http packages because the packages use https encryption, connections are secure.
 
 **Risks we did not mitigate, and why**
 
-**Risk 1: Unauthorized users**
+*Risk 1: Unauthorized users*
 
-Why not?
-
-We did not have time to implement authentication and therefore anyone with access to the website or API can edit the data. No user sign on is required.
+Why not? We did not have time to implement authentication and therefore anyone with access to the website or API can edit the data. No user sign on is required.
 
 ### Deployment: GCP/AWS
 
-| **Purpose** | **Selected GCP component(s)** | **Other GCP components considered** | **Justification for selected component** |
-| --- | --- | --- | --- |
-| Store metadata for each package | Firestore | None | Seemed to be the best existing option for storing json structured data in GCP |
-| Store package content | Cloud Storage | Firestore | Firestore maxes out at 1 MB per document, so any packages that exceed that would not work. We therefore opted for Cloud Storage to store the larger base64 strings. |
-| Host and run part 1 code | Cloud Compute | None | Provided the proper linux environment to host and run the part 1 code |
-| SSH into Cloud Compute instance to trigger part 1 code | Cloud Function | AWS Lambda | AWS Lambda has issues with the Paramiko library because of its natively built sub dependencies with the Cryptography library, so Cloud Function ended up being much easier |
+We carefully selected components of GCP/AWS to use. Provided below is their purpose, other considerations, and their justifications.
+
+- GCP Firestore
+    - **Purpose:** Store metadata for each package
+    - **Other considerations:** Datastore
+    - **Justification:** Seemed to be the best existing option for storing json structured data in GCP
+- GCP Cloud Storage
+    - **Purpose:** Store package content
+    - **Other considerations:** Firestore, AWS S3
+    - **Justification:** Firestore maxes out at 1 MB per document, so any packages that exceed that would not work. We therefore opted for Cloud Storage to store the larger base64 strings.
+- GCP Cloud Compute
+    - **Purpose:** Host and run part 1 code
+    - **Other considerations:** None
+    - **Justification:** Provided the proper linux environment to host and run the part 1 code
+- AWS Lambda Functions
+    - **Purpose:** SSH into Cloud Compute instance to trigger part 1 code
+    - **Other considerations:** GCP Cloud Functions
+    - **Justification:** Cloud Functions has issues with the Paramiko library because of its natively built sub dependencies with the Cryptography library, so AWS Lambda ended up being much easier
+- AWS API Gateway
+    - **Purpose:** Provide REST0ful API service for our project
+    - **Other considerations:** GCP Cloud Endpoints
+    - **Justification:** The API Gateway has a much simpler and easier connection to the Lambda functions, making the use of the functions trivial in comparison to Cloud Endpoints.
 
 We also used several AWS services to help us complete the service. We used AWS API Gateway to set up our API, and connected each endpoint to a Lambda Function to handle the request and interact with our backend.
+
+Here is a quick example of one of the 11 Lambda Functions we had created. This example is for deleting a package. The format of the 11 functions is templated in the same manor. This means we first go through logging, then run validation checks, and finally complete the operation. Error handling is also implemented. See code comments for more information.
+
+```python
+import json
+import requests
+import datetime
+import random
+
+def lambda_handler(event, context):
+		"""
+		Function to delete a package.
+		Uses HTTP methods to communicate with the Google API.
+		Template:
+		 - Logging
+			 Use Google API to connect to Firestore and edit (POST) a document to log this event.
+			 The name of the document is the date and a nonce.
+		 - Validation
+			 In this case, validation only requires checking if the package exists.
+			 For other cases, validation could require looking at the incoming body/query
+			 and ensuring type validation, checking for invalid syntax, or even just confirming
+			 no illegal values are provided/received.
+		 - Operation
+			 The actual operation of the functions. In this case it is a request to delete the
+			 package.
+		"""
+		# First, we use the Google API to create a log of the deletion.
+		# used https://stackoverflow.com/questions/2150739/iso-time-iso-8601-in-python for utc iso date
+    date = datetime.datetime.utcnow().isoformat()
+    log_id = date + '-' + str(int(random.random()*1000000))
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/logging?documentId=" + log_id
+    requests.post(url, data=json.dumps({"fields": {"event": {"stringValue" : json.dumps(event)}}}), timeout=60).json()
+		
+		# Once the log is created, we need to ensure the package exists, thus a GET method is used.
+		# We use the API to get the metadata of the package stored in Firestore, and delete the metadata afterwards.
+		# We do not need to check if the package exists when deleting in Firestore since the API handles that.
+    path_id = event['path'][9:]
+    url = "https://firestore.googleapis.com/v1/projects/acme-register/databases/(default)/documents/packages/" + path_id
+    response = requests.get(url, timeout=60).json() 
+    requests.delete(url, timeout=60).json()
+
+		# If there was no error so far (thus package exists), then proceed to delete the package.
+		# The package contents are stored in Cloud Storage, thus if there really exists a package
+		# (i.e. Firestore had some package metadata), we proceed to delete it.
+    if not("error" in response):
+
+        # https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+        url = "https://storage.googleapis.com/storage/v1/b/acme-register-contents/o/"+path_id
+        response = requests.delete(url, timeout=60)
+        
+        # Return success
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+                'Access-Control-Allow-Origin': '*',
+            },
+            "body": "Package is deleted."
+        }
+    
+    # Error handling (in this case, no package was found after going through logic)
+    return {
+        "statusCode": 404,
+        "headers": {
+            "Content-Type": "application/json",
+            'Access-Control-Allow-Origin': '*',
+        },
+        "body": "Package does not exist."
+    }
+```
 
 ### Deployment: CI/CD
 
@@ -556,13 +660,117 @@ The rust code (which is the rating code) was being tested by the automated test 
 
 There could be defects in the website as this is not checked, although this can be detected in the website's use and would not critically impact API through the terminal and thus would not be a critical failure. There could also be problems in the python code unrelated to the syntax. This could be problematic, but manual testing should resolve this.
 
-[Screenshot of the GitHub action file (e.g. YAML) that defines the CI stages](https://lh7-rt.googleusercontent.com/docsz/AD_4nXeF5DdDwPNOP0AlZbfy58QfM8yqBvNB5965FE85CvCcjDSxB7szPJNfbdjyRlj3ab7hmEUFJ3XqZhzU61vIQIT4hatv4tvaUmERsNCuS0us6rnu4J6xF9Dlyk-LNDenwzg9wA5X0jEvcfL-Kk0lx1sDN9hg6WsL8JX31GH2yw?key=JAMgH77mlo9KnWtQt27gug)
+The following is the YAML for the workflow that will Lint and Test our repository.
 
-Screenshot of the GitHub action file (e.g. YAML) that defines the CI stages
+```yaml
+# Pipeline to Lint and Test the Python code when a Pull Request (PR) is created.
 
-[Image X: Test](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdjTxWpT96UaMSVtrd9DsNVgbiAh2lp1JulQ44SLHNRPqf-Rwu8cPhO2yfONO4QFF-k5JzSwTmy9AkySW4TZEz9RGKURICT26IDksholCe5TAJ312yGTAqWKOk08_7_v80ws4tXPEJqO9bf3evnFAEKOCMP32SrmFTkkcLA?key=JAMgH77mlo9KnWtQt27gug)
+# used https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions for understanding yaml files
+# learned you can used echo from https://towardsdatascience.com/github-actions-everything-you-need-to-know-to-get-started-537f1dffa0ed 
+# learned you can use make commands from link.yaml adopted from the other team
 
-Image X: Test
+name: testing repo
+run-name: ${{github.actor}} is trying to do a pull request
+# Trigger the workflow on PR.
+on: [pull_request]
+jobs: 
+  lint-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{matrix.python-version}}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{matrix.python-version}}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+    - name: Analysing the code with pylint
+	    # W0613 -> Unused argument 'context', W0612 -> Unused variable, W0104 -> Statement seems to have no effect, E0401 -> Unable to import 'requests'
+      run: |
+        pylint $(git ls-files '*.py') --disable=C --disable=R --disable=W0613 --disable=W0612 --disable=W0104 --disable=E0401
+  test-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make lint
+      - run: make init-fake-submodules
+      - run: make test
+
+```
+
+The following is the YAML for the workflow that deploys our AWS Lambda Functions.
+
+```yaml
+# Pipeline to deploy Lambda Functions to AWS.
+
+name: deploy to lambda
+# Trigger the workflow on push for the main branch.
+on:
+  push:
+    branches:
+      - Lambda-Functions
+jobs:
+  deploy_source:
+    name: deploy lambda from source
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v1
+      - name: deploy get-package
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          function_name: get-package
+          source: src/lambda_functions/get_package.py
+			... (10 more)
+```
+
+The following is a sample run of our test pipeline. As shown, the various tests for the API, controller, input, and output are passing.
+
+```
+...
+Compiling backend v8.1.0 (/home/runner/work/ECE461-Project-ACMEIR/ECE461-Project-ACMEIR)
+  Finished test [unoptimized + debuginfo] target(s) in 44.49s
+    Running unittests src/main.rs (target/debug/deps/backend-cd2828c30f1004a8)
+
+running 25 tests
+test api::fetch::tests::github_repository_name_url ... ok
+test api::fetch::tests::github_repository_name_display ... ok
+test api::fetch::url_conversion::tests::github_https_repo_convert ... ok
+test api::fetch::url_conversion::tests::githuh_git_repo_convert ... ok
+test controller::bus_factor::tests::score_commit_large ... ok
+test controller::bus_factor::tests::score_commit_normal ... ok
+test controller::bus_factor::tests::score_commit_small ... ok
+test controller::bus_factor::tests::score_commit_zero ... ok
+test controller::correctness::tests::correctness ... ok
+test controller::license_compatibility::tests::license_hard ... ok
+test controller::license_compatibility::tests::license_low ... ok
+test controller::license_compatibility::tests::license_none ... ok
+test controller::license_compatibility::tests::license_simple ... ok
+test controller::responsiveness::tests::responsiveness_basic ... ok
+test controller::tests::net_score_calculation_simple ... ok
+test controller::tests::net_score_div_zero ... ok
+test controller::tests::net_score_ignore_unimplemented ... ok
+test controller::tests::net_score_not_greater_than_one_given_high_weight ... ok
+test controller::tests::score_display_contains all ... ok
+test controller::tests::score_display_format_simple ... ok
+test input::cli::tests::exec_program... ok
+test input::cli::tests::test_read_file ... ok
+test input::cli::tests::test_set_args... ok
+test output::tests::simple_sort ... ok
+test controller::bus_factor::tests::multiple_commits_better ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+Post Run actions/checkout@v3
+Complete job
+```
 
 We are using AWS API Gateway and Lambda functions because of the specification versioning issue and are deploying to the AWS Lambda functions, but although we are using GCP compute engine, cloud storage, a cloud function, and firebase but are not automatically deploying to them. For the lambda functions, since we hadn't deployed our API yet we were doing CD on pushes to a specific Lambda-Functions branch so that the functions could be tested immediately on there. Since this also directly interfaced with the API Gateway, it was useful to keep the deployment on push to Lambda-Functions rather than to master, and is currently still that way, although that is probably something that should be moved to master now that we have a working API. Keeping it in Lambda-Functions makes it much easier to comply with pull request requirements for master, although in turn it makes keeping master safe much less useful. The code in the VM, the cloud function, and in the lambda functions was also changed separately from the GitHub as well.
 
